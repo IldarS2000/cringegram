@@ -7,12 +7,6 @@ The application will have JWT authorization with password recovery. After regist
 
 ## Team members
 
-
------
-
-
--------
-
 - [barnet30](https://github.com/barnet30) - Backend
 - [sergeykoryagin](https://github.com/sergeykoryagin) - Frontend
 - [rizzleduq](https://github.com/rizzleduq) - Design
