@@ -5,7 +5,10 @@ HOST=$2
 DBNAME=$3
 
 psql -h $HOST -U $USER -d $DBNAME \
-     -c `echo ../src/server/db/tables.sql`
+     -c `echo ../src/server/db/create_db.sql`
 
 psql -h $HOST -U $USER -d $DBNAME \
-     -c `echo ../src/server/db/procedures.sql`
+     -c `echo ../src/server/db/create_tables.sql`
+
+psql -h $HOST -U $USER -d $DBNAME \
+     -c `echo ../src/server/db/create_procedures.sql`
