@@ -3,8 +3,8 @@ create database cringegram;
 create table cringegram.public.user
 (
     id            serial primary key,
-    phone_number  char(15)    not null,
-    name          varchar(20) not null,
+    phone_number  char(15)    not null unique,
+    name          varchar(20) not null unique,
     avatar        bytea,
     about_me      varchar(64),
     access_token  text        not null,
@@ -43,18 +43,3 @@ create table cringegram.public.comment
     user_id int          not null references cringegram.public.user (id),
     comment varchar(128) not null
 );
-
-select *
-from cringegram.public.user;
-
-select *
-from cringegram.public.post;
-
-select *
-from cringegram.public.subscription;
-
-select *
-from cringegram.public.like;
-
-select *
-from cringegram.public.comment;
