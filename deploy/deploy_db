@@ -1,0 +1,11 @@
+#! /bin/bash
+
+USER=$1
+HOST=$2
+DBNAME=$3
+
+psql -h $HOST -U $USER -d $DBNAME \
+     -c `echo ../src/server/db/tables.sql`
+
+psql -h $HOST -U $USER -d $DBNAME \
+     -c `echo ../src/server/db/procedures.sql`
