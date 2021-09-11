@@ -7,10 +7,10 @@ The application will have JWT authorization with password recovery. After regist
 
 ## Team members
 
-- [Pavel Gavrichev](https://github.com/barnet30) - Backend
-- Sergey Koryagin - Frontend
-- Anton Vasiliev - Design
-- Ildar Sadykov - Architect, Team Lead
+- [barnet30](https://github.com/barnet30) - Backend
+- [sergeykoryagin](https://github.com/sergeykoryagin) - Frontend
+- [rizzleduq](https://github.com/rizzleduq) - Design
+- [Ildar Sadykov](https://github.com/Karantir73) - Architect, Team Lead
 
 ## Powered by
 - PostgreSQL
