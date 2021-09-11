@@ -96,3 +96,25 @@ begin
 end;
 $$;
 
+create or replace procedure add_post_comment(arg_post_id int,
+                                             arg_user_id int,
+                                             arg_comment varchar(128))
+    language plpgsql
+as
+$$
+begin
+    insert into cringegram.public.comment(post_id, user_id, comment)
+    values (arg_post_id, arg_user_id, arg_comment);
+end;
+$$;
+
+create or replace procedure del_post_comment(arg_comment_id int)
+    language plpgsql
+as
+$$
+begin
+    delete
+    from cringegram.public.comment
+    where id = arg_comment_id;
+end;
+$$;
