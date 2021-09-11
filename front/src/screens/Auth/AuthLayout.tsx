@@ -1,5 +1,5 @@
-import React, { FC, ReactNode } from 'react'
-import { View, StyleSheet, Text, ViewStyle } from 'react-native';
+import React, { FC, ReactNode, useEffect, useRef } from 'react'
+import { View, StyleSheet, Text, ViewStyle, Animated } from 'react-native';
 import { Fonts } from '../../constants/fonts';
 
 interface Props {
@@ -9,14 +9,26 @@ interface Props {
 }
 
 export const AuthLayout: FC<Props> = ({ title, style, children }: Props): JSX.Element => {
+    const fadeAnimation = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        Animated.timing(
+            fadeAnimation, {
+            toValue: 1,
+            duration: 500,
+            useNativeDriver: true
+        }).start();
+    }, [fadeAnimation]);
+
     return (
-        <View style={{
+        <Animated.View style={{
             ...styles.authLayout,
-            ...style
+            ...style,
+            opacity: fadeAnimation,
         }}>
             <Text style={styles.title}>{title}</Text>
             {children}
-        </View>
+        </Animated.View>
     );
 };
 

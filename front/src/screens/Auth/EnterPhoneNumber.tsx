@@ -28,6 +28,8 @@ export const EnterPhoneNumber: FC = () => {
                 mask='+7 (999) 999-99-99'
                 value={number}
                 style={styles.input}
+                hasError={false}
+                onSubmitEditing={handleButtonPress}
             />
             <Button
                 text='OK'

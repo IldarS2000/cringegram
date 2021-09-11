@@ -1,8 +1,7 @@
-import React, { FC } from 'react'
-import { View, StyleSheet, Text, ViewStyle, TouchableHighlight } from 'react-native';
+import React, { FC, useEffect, useRef } from 'react'
+import { View, StyleSheet, Text, ViewStyle, Animated, TouchableWithoutFeedback } from 'react-native';
 import { Color } from '../../constants/colors';
 import { Fonts } from '../../constants/fonts';
-import { getStyleByCondition } from '../../utils/get-style-by-condition';
 
 interface Props {
     text?: string;
@@ -11,34 +10,72 @@ interface Props {
     disabled?: boolean;
 }
 
+enum ColorAnimatedValue {
+    DEFAULT,
+    PRESSED,
+    DISABLED
+}
+
 export const Button: FC<Props> = ({
     text,
     style,
     disabled = false,
     onPress
 }: Props): JSX.Element => {
+    const colorAnimation = useRef(new Animated.Value(ColorAnimatedValue.DEFAULT)).current;
+
+    const onPressIn = () => {
+        Animated.spring(colorAnimation, {
+            toValue: ColorAnimatedValue.PRESSED,
+            useNativeDriver: false,
+        }).start();
+    };
+
+    const onPressOut = () => {
+        Animated.spring(colorAnimation, {
+            toValue: ColorAnimatedValue.DEFAULT,
+            useNativeDriver: false,
+        }).start();
+    };
+
+    useEffect(() => {
+        const colorValue = disabled ? ColorAnimatedValue.DISABLED : ColorAnimatedValue.DEFAULT;
+        Animated.timing(colorAnimation, {
+            toValue: colorValue,
+            useNativeDriver: false,
+            duration: 200
+        }).start();
+    }, [colorAnimation, disabled]);
+
+    const colorInterpolation = colorAnimation.interpolate({
+        inputRange: [
+            ColorAnimatedValue.DEFAULT,
+            ColorAnimatedValue.PRESSED,
+            ColorAnimatedValue.DISABLED
+        ],
+        outputRange: [Color.GREEN300, Color.GREEN100, Color.BLACK300]
+    });
+
     return (
-        <TouchableHighlight
-            style={{
-                ...styles.button,
-                ...style,
-                ...getStyleByCondition(disabled, styles.disabled)
-            }}
-            delayPressIn={0}
-            delayPressOut={0}
-            activeOpacity={1}
-            underlayColor={Color.GREEN100}
+        <TouchableWithoutFeedback
             onPress={onPress}
             disabled={disabled}
+            onPressIn={onPressIn}
+            onPressOut={onPressOut}
+            style={style}
         >
-            <Text style={styles.text}>{text}</Text>
-        </TouchableHighlight>
+            <Animated.View style={{
+                ...styles.button,
+                backgroundColor: colorInterpolation
+            }}>
+                <Text style={styles.text}>{text}</Text>
+            </Animated.View>
+        </TouchableWithoutFeedback>
     );
 };
 
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: Color.GREEN300,
         borderRadius: 35,
         height: 70,
         minWidth: 70,
