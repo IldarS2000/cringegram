@@ -1,16 +1,16 @@
 # cringegram
 
-Учебный проект “Кринжграм”
-Разработка мобильного приложения на платформе андроид для публикации фото и статей.
-В приложении будет реализована JWT авторизация с восстановлением пароля. После регистрации аккаунта создается профиль(страница) на нашей платформе. Пользователь может добавлять фотографии и статьи к себе в профиль и видеть в ленте публикации других пользователей. Также будут опции редактирования и удаления. Можно оценивать публикации, оставлять под ними комментарии. Будет реализована возможность посещения профилей других пользователей и подписываться на них.
+Educational project **cringegram**
+Development of a mobile application on the android platform for publishing photos and articles.
+The application will have JWT authorization with password recovery. After registering an account, a profile (page) is created on our platform. The user can add photos and articles to his profile and see other user publications in the feed. There will also be edit and delete options. You can rate publications, leave comments under them. It will be possible to visit the profiles of other users and subscribe to them.
 
-**Powered by:**
+## Powered by
 - PostgreSQL
 - Java Spring
 - React Native
 
-prototype: https://www.figma.com/file/zdsyslfq0Ii1DW9b3ahDNx/Untitled?node-id=0%3A1
+## Diagrams
 
-description: https://docs.google.com/document/d/1MDmXRZuGxEefiodqQ0srFQ-tZ3ucBEWeHLTYRW3nSTc/edit?usp=sharing
+prototype: https://www.figma.com/file/zdsyslfq0Ii1DW9b3ahDNx/Untitled?node-id=0%3A1
 
 architecture: https://miro.com/app/board/o9J_lx6TTd0=/
