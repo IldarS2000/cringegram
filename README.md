@@ -5,7 +5,7 @@ Educational project **cringegram**
 Development of a mobile application on the android platform for publishing photos and articles.
 The application will have JWT authorization with password recovery. After registering an account, a profile (page) is created on our platform. The user can add photos and articles to his profile and see other user publications in the feed. There will also be edit and delete options. You can rate publications, leave comments under them. It will be possible to visit the profiles of other users and subscribe to them.
 
-## Team members:
+## Team members
 - Pavel Gavrichev - Backend
 - Sergey Koryagin - Frontend
 - Anton Vasiliev - Design
