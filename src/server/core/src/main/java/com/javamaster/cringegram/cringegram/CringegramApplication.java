@@ -1,4 +1,4 @@
-package com.javamaster.cringe.cringegram;
+package com.javamaster.cringegram.cringegram;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

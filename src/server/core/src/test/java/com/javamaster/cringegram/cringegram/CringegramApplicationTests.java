@@ -1,4 +1,4 @@
-package com.javamaster.cringe.cringegram;
+package com.javamaster.cringegram.cringegram;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
