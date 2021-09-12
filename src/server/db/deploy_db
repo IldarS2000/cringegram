@@ -12,3 +12,6 @@ psql -h $HOST -d $DBNAME -U $USER \
 
 psql -h $HOST -d $DBNAME -U $USER \
      -c `echo ../src/server/db/create_procedures.sql`
+     
+psql -h $HOST -d $DBNAME -U $USER \
+     -c `echo ../src/server/db/create_functions.sql`
