@@ -5,13 +5,13 @@ DBNAME=$2
 USER=$3
 
 psql -h $HOST -d $DBNAME -U $USER \
-     -c `echo ../src/server/db/create_db.sql`
+     -c `echo create_db.sql`
      
 psql -h $HOST -d $DBNAME -U $USER \
-     -c `echo ../src/server/db/create_tables.sql`
+     -c `echo create_tables.sql`
 
 psql -h $HOST -d $DBNAME -U $USER \
-     -c `echo ../src/server/db/create_procedures.sql`
+     -c `echo create_procedures.sql`
      
 psql -h $HOST -d $DBNAME -U $USER \
-     -c `echo ../src/server/db/create_functions.sql`
+     -c `echo create_functions.sql`
