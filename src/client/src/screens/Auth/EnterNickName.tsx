@@ -31,7 +31,7 @@ export const EnterNickName: FC<Props> = observer(({navigation}) => {
             navigation={navigation}
         >
             <Input
-                placeholder='имя пользователя'
+                placeholder='Имя пользователя'
                 onChangeText={handleInputChange}
                 onFocus={clearErrorMessage}
                 value={nickName}

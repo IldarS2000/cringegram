@@ -119,7 +119,7 @@ export class AuthStore {
             await new Promise((resolve) => {
                 setTimeout(() => {
                     resolve()
-                }, 1500);
+                }, 500);
             });
             this.setIsAuth(false);
             await AsyncStorage.removeItem('token');

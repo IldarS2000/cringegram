@@ -12,6 +12,7 @@ import { EnterNickName } from './src/screens/Auth/EnterNickName';
 import {Profile} from "./src/screens/Profile";
 import {observer} from "mobx-react-lite";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import './src/polyfills/array-buffer';
 
 const Stack = createNativeStackNavigator();
 
