@@ -1,11 +1,11 @@
 import {MainStore} from '.';
 import {makeAutoObservable} from "mobx";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AuthStage } from '../enums/auth-stage.enum';
+import {AuthStage} from '../enums/auth-stage.enum';
 
 export class AuthStore {
     isAuth: boolean = false;
-    isLoading: boolean = false;
+    isLoading: boolean = true;
     isSubmitting: boolean = false;
     authStage: AuthStage = AuthStage.PHONE_NUMBER;
     errorMessage: string | null = null;
@@ -34,6 +34,10 @@ export class AuthStore {
         this.errorMessage = errorMessage;
     };
 
+    clearErrorMessage = (): void => {
+        this.errorMessage = null;
+    };
+
     sendPhoneNumber = async (phoneNumber: string): Promise<void> => {
         this.setIsSubmitting(true);
         try {
@@ -47,7 +51,7 @@ export class AuthStore {
             });
             this.setAuthStage(AuthStage.SECURITY_CODE);
         } catch (e) {
-            console.log(e);
+            console.log(e.message);
             this.setErrorMessage(e.message);
         } finally {
             this.setIsSubmitting(false);
@@ -58,12 +62,12 @@ export class AuthStore {
         this.setIsSubmitting(true);
         try {
             const response = await new Promise((
-                resolve: (value: { registered: boolean }) => void,
+                resolve: (value: { registered: boolean, token?: string }) => void,
                 reject
             ) => {
                 setTimeout(() => {
                     if (securityCode === '1234') {
-                        resolve({registered: true});
+                        resolve({registered: true, token: 'token'});
                     } else if (securityCode === '1111') {
                         resolve({registered: false});
                     } else
@@ -72,11 +76,12 @@ export class AuthStore {
             });
             if (response.registered) {
                 this.setIsAuth(true);
+                await AsyncStorage.setItem('token', response.token!);
             } else {
                 this.setAuthStage(AuthStage.NICKNAME);
             }
         } catch (e) {
-            console.log(e);
+            console.log(e.message);
             this.setErrorMessage(e.message);
         } finally {
             this.setIsSubmitting(false);
@@ -86,25 +91,48 @@ export class AuthStore {
     sendNickName = async (nickName: string): Promise<void> => {
         this.setIsSubmitting(true);
         try {
-            await new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    if (nickName === 'kekwmek') {
-                        reject('Такое имя пользователя уже занято');
-                    } else {
-                        resolve();
-                    }
-                }, 1500);
-            });
+            const response = await new Promise(
+                (resolve: (value: { token: string }) => void,
+                 reject
+                ) => {
+                    setTimeout(() => {
+                        if (nickName === 'kekwmek') {
+                            reject(new Error('Такое имя пользователя уже занято'));
+                        } else {
+                            resolve({token: 'token'});
+                        }
+                    }, 1500);
+                });
             this.setIsAuth(true);
+            await AsyncStorage.setItem('token', response.token);
         } catch (e) {
-            console.log(e);
+            console.log(e.message);
             this.setErrorMessage(e.message);
         } finally {
             this.setIsSubmitting(false);
         }
     };
 
-    updateToken = async (): Promise<void> => {
+    logout = async () => {
+        this.setIsSubmitting(true);
+        try {
+            await new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve()
+                }, 1500);
+            });
+            this.setIsAuth(false);
+            await AsyncStorage.removeItem('token');
+            this.setAuthStage(AuthStage.PHONE_NUMBER);
+        } catch (e) {
+            console.log(e.message);
+            this.setErrorMessage(e.message);
+        } finally {
+            this.setIsSubmitting(false);
+        }
+    }
+
+    authMe = async (): Promise<void> => {
         this.setIsLoading(true);
         try {
             const token = await AsyncStorage.getItem('token');

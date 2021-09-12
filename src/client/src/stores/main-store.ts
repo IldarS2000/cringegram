@@ -1,4 +1,4 @@
-import {AuthStore} from "./authStore";
+import {AuthStore} from "./auth-store";
 
 export class MainStore {
     authStore: AuthStore;

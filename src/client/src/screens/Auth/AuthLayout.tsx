@@ -1,5 +1,5 @@
 import React, {FC, ReactNode, useEffect, useRef} from 'react'
-import {Animated, StyleSheet, Text, ViewStyle} from 'react-native';
+import {Animated, BackHandler, StyleSheet, Text, ViewStyle} from 'react-native';
 import {Fonts} from '../../constants/fonts';
 import {useStores} from "../../hooks/useStores";
 import {AuthStage} from "../../enums/auth-stage.enum";
@@ -8,13 +8,13 @@ import {observer} from "mobx-react-lite";
 
 interface Props {
     title: string;
-    style: ViewStyle;
+    style?: ViewStyle;
     children: ReactNode;
     navigation: NavigationScreenProp<any>
 }
 
 export const AuthLayout: FC<Props> = observer(({ title, style, children, navigation }: Props): JSX.Element => {
-    const { authStore: {authStage} } = useStores();
+    const { authStore: {authStage, setAuthStage} } = useStores();
     useEffect(() => {
         switch (authStage) {
             case AuthStage.PHONE_NUMBER:
@@ -24,16 +24,33 @@ export const AuthLayout: FC<Props> = observer(({ title, style, children, navigat
                 navigation.navigate('Code');
                 break;
             case AuthStage.NICKNAME:
+                navigation.navigate('Name')
                 break;
         }
-    }, [authStage])
+    }, [authStage]);
+
+    useEffect(() => {
+        const onBack = () => {
+             switch (authStage) {
+                 case AuthStage.NICKNAME:
+                     setAuthStage(AuthStage.SECURITY_CODE);
+                     break;
+                 case AuthStage.SECURITY_CODE:
+                     setAuthStage(AuthStage.PHONE_NUMBER);
+                     break;
+             }
+        };
+        //@ts-ignore
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', onBack);
+        return () => backHandler.remove();
+    }, []);
 
     const fadeAnimation = useRef(new Animated.Value(0)).current;
     useEffect(() => {
         Animated.timing(
             fadeAnimation, {
             toValue: 1,
-            duration: 500,
+            duration: 200,
             useNativeDriver: true
         }).start();
     }, [fadeAnimation]);

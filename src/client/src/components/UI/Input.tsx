@@ -16,6 +16,10 @@ interface Props {
     hasError?: boolean;
     disabled?: boolean;
     onSubmitEditing?: () => void;
+    maxLength?: number;
+    onFocus?: () => void;
+    autofocus?: boolean;
+    onChange?: () => void;
 }
 
 enum BorderColorAnimatedValue {
@@ -45,6 +49,10 @@ export const Input: FC<Props> = ({
     disabled = false,
     hasError = false,
     onSubmitEditing,
+    maxLength,
+    onFocus,
+    autofocus = false,
+    onChange
 }: Props): JSX.Element => {
     const [focused, setFocused] = useState<boolean>(false);
     const borderColorAnimation = useRef(
@@ -89,7 +97,7 @@ export const Input: FC<Props> = ({
                     duration: 300
                 }),
         ]).start();
-    }, [borderColorAnimation, focused, hasError]);
+    }, [borderColorAnimation, focused, hasError, borderWidthAnimation, backgroundColorAnimation, disabled]);
 
     const borderColorInterpolation = borderColorAnimation.interpolate({
         inputRange: [
@@ -152,13 +160,19 @@ export const Input: FC<Props> = ({
                     placeholderTextColor={Color.BLACK300}
                     selectionColor={Color.BLUE300}
                     value={value}
-                    onFocus={() => setFocused(true)}
+                    onFocus={() => {
+                        onFocus?.();
+                        setFocused(true);
+                    }}
+                    autofocus={autofocus}
+                    onChange={onChange}
                     onBlur={() => setFocused(false)}
                     placeholder={focused ? '' : placeholder}
                     keyboardType={keyboardType}
                     onChangeText={onChangeText}
                     editable={!disabled}
                     onSubmitEditing={onSubmitEditing}
+                    maxLength={maxLength}
                 />
             </Animated.View>
         </View>

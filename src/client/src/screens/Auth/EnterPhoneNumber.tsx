@@ -13,11 +13,11 @@ interface Props {
 }
 
 export const EnterPhoneNumber: FC<Props> = observer(({navigation}) => {
-    const [phoneNumber, setPhoneNumber] = useState<string>('');
-    const { authStore: { isSubmitting, errorMessage, sendPhoneNumber } } = useStores();
+    const [phoneNumber, setPhoneNumber] = useState<string>('+7');
+    const { authStore: { isSubmitting, errorMessage, sendPhoneNumber, clearErrorMessage } } = useStores();
 
     const handleInputChange = (value: string): void => {
-        setPhoneNumber(value);
+        setPhoneNumber(value)
     };
 
     const handleButtonPress = () => {
@@ -43,7 +43,9 @@ export const EnterPhoneNumber: FC<Props> = observer(({navigation}) => {
                 style={styles.input}
                 hasError={!!errorMessage}
                 onSubmitEditing={handleButtonPress}
-                disabled={false}
+                disabled={isSubmitting}
+                maxLength={18}
+                onFocus={clearErrorMessage}
             />
             <Button
                 text='OK'
