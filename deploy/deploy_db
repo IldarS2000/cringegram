@@ -1,14 +1,14 @@
 #! /bin/bash
 
-USER=$1
-HOST=$2
-DBNAME=$3
+HOST=$1
+DBNAME=$2
+USER=$3
 
-psql -h $HOST -U $USER -d $DBNAME \
+psql -h $HOST -d $DBNAME -U $USER \
      -c `echo ../src/server/db/create_db.sql`
-
-psql -h $HOST -U $USER -d $DBNAME \
+     
+psql -h $HOST -d $DBNAME -U $USER \
      -c `echo ../src/server/db/create_tables.sql`
 
-psql -h $HOST -U $USER -d $DBNAME \
+psql -h $HOST -d $DBNAME -U $USER \
      -c `echo ../src/server/db/create_procedures.sql`
