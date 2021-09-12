@@ -1,14 +1,14 @@
-create database cringegram;
-
 create table cringegram.public.user
 (
-    id            serial primary key,
-    phone_number  char(15)    not null unique,
-    name          varchar(20) not null unique,
-    avatar        bytea,
-    about_me      varchar(64),
-    access_token  text        not null,
-    refresh_token text        not null
+    id                 serial primary key,
+    phone_number       char(15)    not null unique,
+    name               varchar(20) not null unique,
+    avatar             bytea,
+    about_me           varchar(64),
+    post_count         int         not null,
+    subscription_count int         not null,
+    access_token       text        not null,
+    refresh_token      text        not null
 );
 
 create table cringegram.public.post
