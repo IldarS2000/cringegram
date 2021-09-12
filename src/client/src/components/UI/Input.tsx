@@ -19,14 +19,19 @@ interface Props {
 }
 
 enum BorderColorAnimatedValue {
-    DEFAULT,
     ERROR,
-    FOCUS
+    DEFAULT,
+    FOCUS,
+}
+
+enum BackgroundColorAnimatedValue {
+    DEFAULT,
+    DISABLED,
 }
 
 enum BorderWidthAnimatedValue {
     DEFAULT = 1,
-    FOCUS = 2
+    FOCUS = 2,
 }
 
 export const Input: FC<Props> = ({
@@ -48,6 +53,9 @@ export const Input: FC<Props> = ({
     const borderWidthAnimation = useRef(
         new Animated.Value(BorderWidthAnimatedValue.DEFAULT)
     ).current;
+    const backgroundColorAnimation = useRef(
+        new Animated.Value(BackgroundColorAnimatedValue.DEFAULT)
+    ).current;
 
     useEffect(() => {
         const colorValue = hasError 
@@ -58,6 +66,9 @@ export const Input: FC<Props> = ({
         const widthValue = focused 
             ? BorderWidthAnimatedValue.FOCUS
             : BorderWidthAnimatedValue.DEFAULT;
+        const backgroundColor = disabled
+            ? BackgroundColorAnimatedValue.DISABLED
+            : BackgroundColorAnimatedValue.DEFAULT;
         Animated.parallel([
             Animated.timing(borderColorAnimation,
                 {
@@ -70,17 +81,31 @@ export const Input: FC<Props> = ({
                     toValue: widthValue,
                     useNativeDriver: false,
                     duration: 300
-                })
+                }),
+            Animated.timing(backgroundColorAnimation,
+                {
+                    toValue: backgroundColor,
+                    useNativeDriver: false,
+                    duration: 300
+                }),
         ]).start();
     }, [borderColorAnimation, focused, hasError]);
 
     const borderColorInterpolation = borderColorAnimation.interpolate({
         inputRange: [
-            BorderColorAnimatedValue.DEFAULT,
             BorderColorAnimatedValue.ERROR,
+            BorderColorAnimatedValue.DEFAULT,
             BorderColorAnimatedValue.FOCUS
         ],
-        outputRange: [Color.BLACK500, Color.RED300, Color.BLUE300],
+        outputRange: [Color.RED300, Color.BLACK500, Color.BLUE300],
+    });
+
+    const backgroundColorInterpolation = backgroundColorAnimation.interpolate({
+        inputRange: [
+            BackgroundColorAnimatedValue.DEFAULT,
+            BackgroundColorAnimatedValue.DISABLED,
+        ],
+        outputRange: [Color.WHITE, Color.BLACK200],
     });
 
     const paddingInterpolation = borderWidthAnimation.interpolate({
@@ -108,6 +133,7 @@ export const Input: FC<Props> = ({
                 <Text style={styles.label}>{label}</Text>
             )}
             <Animated.View style={{
+                backgroundColor: backgroundColorInterpolation,
                 borderColor: borderColorInterpolation,
                 borderWidth: borderWidthAnimation,
                 borderRadius: 50,
@@ -115,6 +141,7 @@ export const Input: FC<Props> = ({
                 justifyContent: 'center',
                 paddingHorizontal: paddingInterpolation
             }}>
+                {/*@ts-ignore*/}
                 <InputComponent
                     {...maskedProps}
                     style={{
@@ -122,7 +149,7 @@ export const Input: FC<Props> = ({
                         ...getStyleByCondition(hasError, styles.error),
                         ...getStyleByCondition(disabled, styles.disabled)
                     }}
-                    placeholderTextColor={Color.BLACK200}
+                    placeholderTextColor={Color.BLACK300}
                     selectionColor={Color.BLUE300}
                     value={value}
                     onFocus={() => setFocused(true)}
@@ -142,6 +169,7 @@ const styles = StyleSheet.create({
     wrapper: {
         width: '100%',
         height: 80,
+        justifyContent: 'center',
     },
     label: {
         ...Fonts.inputLabel,
@@ -149,11 +177,9 @@ const styles = StyleSheet.create({
     },
     input: {
         ...Fonts.inputText,
-        borderRadius: 50,
-        height: 55,
+        width: '100%',
     },
     disabled: {
-        backgroundColor: Color.BLACK100,
         color: Color.BLACK300
     },
     error: {

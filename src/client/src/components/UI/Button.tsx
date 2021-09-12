@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef } from 'react'
-import { View, StyleSheet, Text, ViewStyle, Animated, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, ViewStyle, Animated, TouchableWithoutFeedback } from 'react-native';
 import { Color } from '../../constants/colors';
 import { Fonts } from '../../constants/fonts';
 
@@ -53,7 +53,7 @@ export const Button: FC<Props> = ({
             ColorAnimatedValue.PRESSED,
             ColorAnimatedValue.DISABLED
         ],
-        outputRange: [Color.GREEN300, Color.GREEN100, Color.BLACK300]
+        outputRange: [Color.GREEN300, Color.GREEN100, Color.BLACK200]
     });
 
     return (
@@ -86,11 +86,5 @@ const styles = StyleSheet.create({
     text: {
         ...Fonts.button,
         color: Color.WHITE,
-    },
-    pressed: {
-        backgroundColor: Color.GREEN100
-    },
-    disabled: {
-        backgroundColor: Color.BLACK200,
     },
 });

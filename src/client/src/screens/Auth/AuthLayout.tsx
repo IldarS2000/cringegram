@@ -1,16 +1,34 @@
-import React, { FC, ReactNode, useEffect, useRef } from 'react'
-import { View, StyleSheet, Text, ViewStyle, Animated } from 'react-native';
-import { Fonts } from '../../constants/fonts';
+import React, {FC, ReactNode, useEffect, useRef} from 'react'
+import {Animated, StyleSheet, Text, ViewStyle} from 'react-native';
+import {Fonts} from '../../constants/fonts';
+import {useStores} from "../../hooks/useStores";
+import {AuthStage} from "../../enums/auth-stage.enum";
+import {NavigationScreenProp} from "react-navigation";
+import {observer} from "mobx-react-lite";
 
 interface Props {
     title: string;
     style: ViewStyle;
     children: ReactNode;
+    navigation: NavigationScreenProp<any>
 }
 
-export const AuthLayout: FC<Props> = ({ title, style, children }: Props): JSX.Element => {
-    const fadeAnimation = useRef(new Animated.Value(0)).current;
+export const AuthLayout: FC<Props> = observer(({ title, style, children, navigation }: Props): JSX.Element => {
+    const { authStore: {authStage} } = useStores();
+    useEffect(() => {
+        switch (authStage) {
+            case AuthStage.PHONE_NUMBER:
+                navigation.navigate('Phone');
+                break;
+            case AuthStage.SECURITY_CODE:
+                navigation.navigate('Code');
+                break;
+            case AuthStage.NICKNAME:
+                break;
+        }
+    }, [authStage])
 
+    const fadeAnimation = useRef(new Animated.Value(0)).current;
     useEffect(() => {
         Animated.timing(
             fadeAnimation, {
@@ -30,7 +48,7 @@ export const AuthLayout: FC<Props> = ({ title, style, children }: Props): JSX.El
             {children}
         </Animated.View>
     );
-};
+});
 
 const styles = StyleSheet.create({
     authLayout: {
