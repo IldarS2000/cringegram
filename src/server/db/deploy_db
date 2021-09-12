@@ -1,0 +1,17 @@
+#! /bin/bash
+
+HOST=$1
+DBNAME=$2
+USER=$3
+
+psql -h $HOST -d $DBNAME -U $USER \
+     -c `echo create_db.sql`
+     
+psql -h $HOST -d $DBNAME -U $USER \
+     -c `echo create_tables.sql`
+
+psql -h $HOST -d $DBNAME -U $USER \
+     -c `echo create_procedures.sql`
+     
+psql -h $HOST -d $DBNAME -U $USER \
+     -c `echo create_functions.sql`

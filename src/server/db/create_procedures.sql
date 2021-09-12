@@ -103,8 +103,8 @@ create or replace procedure add_post(arg_user_id int,
 as
 $$
 begin
-    insert into cringegram.public.post(user_id, photo, description, like_count)
-    values (arg_user_id, arg_photo, arg_description, 0);
+    insert into cringegram.public.post(user_id, create_timestamp, photo, description, like_count)
+    values (arg_user_id, current_timestamp, arg_photo, arg_description, 0);
 
     update cringegram.public."user"
     set post_count = post_count + 1
