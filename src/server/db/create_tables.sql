@@ -13,11 +13,12 @@ create table cringegram.public.user
 
 create table cringegram.public.post
 (
-    id          serial primary key,
-    user_id     int   not null references cringegram.public.user (id),
-    photo       bytea not null,
-    description varchar(512),
-    like_count  int   not null
+    id               serial primary key,
+    user_id          int       not null references cringegram.public.user (id),
+    create_timestamp timestamp not null,
+    photo            bytea     not null,
+    description      varchar(512),
+    like_count       int       not null
 );
 
 create table cringegram.public.subscription
