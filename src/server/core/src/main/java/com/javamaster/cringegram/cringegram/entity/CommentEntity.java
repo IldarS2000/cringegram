@@ -1,5 +1,6 @@
 package com.javamaster.cringegram.cringegram.entity;
 
+import com.javamaster.cringegram.cringegram.entity.user.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

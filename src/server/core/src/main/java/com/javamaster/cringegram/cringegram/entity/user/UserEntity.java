@@ -1,5 +1,7 @@
-package com.javamaster.cringegram.cringegram.entity;
+package com.javamaster.cringegram.cringegram.entity.user;
 
+import com.javamaster.cringegram.cringegram.entity.CommentEntity;
+import com.javamaster.cringegram.cringegram.entity.PostEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,6 +30,9 @@ public class UserEntity {
 
     @Column(name = "avatar")
     private byte[] avatar;
+
+    @Column(name = "password")
+    private String password;
 
     @Column(name = "about_me")
     private String aboutMe;
@@ -67,4 +72,6 @@ public class UserEntity {
     )
     private Set<PostEntity> likedPosts;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }
