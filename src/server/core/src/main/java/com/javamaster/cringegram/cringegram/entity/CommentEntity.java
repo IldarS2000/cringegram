@@ -1,12 +1,18 @@
 package com.javamaster.cringegram.cringegram.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "comment")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CommentEntity {
 
     @Id
@@ -21,6 +27,6 @@ public class CommentEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @Column
+    @Column(name = "comment")
     private String comment;
 }
