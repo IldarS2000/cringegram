@@ -5,5 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
 
-    UserEntity findByPhoneNumber(String phone_number);
+    UserEntity findByPhone(String phoneNumber);
+
+    boolean existsUserEntityByUsername(String username);
+
+    boolean existsUserEntityByPhone(String phoneNumber);
 }

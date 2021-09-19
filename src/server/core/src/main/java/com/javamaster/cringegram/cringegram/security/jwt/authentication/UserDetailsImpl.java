@@ -1,6 +1,5 @@
 package com.javamaster.cringegram.cringegram.security.jwt.authentication;
 
-import com.javamaster.cringegram.cringegram.entity.user.Role;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,12 +14,11 @@ import java.util.Collections;
 public class UserDetailsImpl implements UserDetails {
 
     private Long userId;
-    private Role role;
     private String username;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.toString());
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(username);
         return Collections.singleton(authority);
     }
 

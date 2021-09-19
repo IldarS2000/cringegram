@@ -11,7 +11,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,7 +23,7 @@ public class UserEntity {
     private Long id;
 
     @Column(name = "phone_number")
-    private String phoneNumber;
+    private String phone;
 
     @Column(name = "username")
     private String username;
@@ -43,11 +43,8 @@ public class UserEntity {
     @Column(name = "subscription_count")
     private Integer subscriptionCount;
 
-    @Column(name = "access_token")
-    private String accessToken;
-
-    @Column(name = "refresh_token")
-    private String refreshToken;
+    @Column(name = "email")
+    private String email;
 
     @OneToMany(mappedBy = "user")
     private Set<PostEntity> posts;
@@ -72,6 +69,4 @@ public class UserEntity {
     )
     private Set<PostEntity> likedPosts;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
 }

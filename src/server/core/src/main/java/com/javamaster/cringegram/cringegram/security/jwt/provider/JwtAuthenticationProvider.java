@@ -1,6 +1,5 @@
 package com.javamaster.cringegram.cringegram.security.jwt.provider;
 
-import com.javamaster.cringegram.cringegram.entity.user.Role;
 import com.javamaster.cringegram.cringegram.security.jwt.authentication.JwtAuthentication;
 import com.javamaster.cringegram.cringegram.security.jwt.authentication.UserDetailsImpl;
 import io.jsonwebtoken.Claims;
@@ -33,7 +32,6 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         UserDetails userDetails =
                 UserDetailsImpl.builder()
                         .userId(Long.parseLong(claims.get("sub", String.class)))
-                        .role(Role.valueOf(claims.get("role",String.class)))
                         .username(claims.get("username", String.class))
                         .build();
 
