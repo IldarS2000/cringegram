@@ -3,13 +3,11 @@ package com.javamaster.cringegram.cringegram.service.impls;
 
 import com.javamaster.cringegram.cringegram.dto.SignUpDto;
 import com.javamaster.cringegram.cringegram.dto.UserDto;
-//import com.javamaster.cringegram.cringegram.dto.mapper.UserMapper;
 import com.javamaster.cringegram.cringegram.entity.user.UserEntity;
 import com.javamaster.cringegram.cringegram.exception.UserExistException;
 import com.javamaster.cringegram.cringegram.repository.UserEntityRepository;
 import com.javamaster.cringegram.cringegram.service.SignUpService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +18,6 @@ public class SignUpServiceImpl implements SignUpService {
     private final UserEntityRepository userEntityRepository;
 
     private final PasswordEncoder passwordEncoder;
-
-    //private final UserMapper userMapper;
 
     @Override
     public UserDto sighUp(SignUpDto signUpDto) {

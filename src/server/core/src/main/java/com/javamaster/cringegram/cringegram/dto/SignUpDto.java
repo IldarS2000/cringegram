@@ -42,7 +42,7 @@ public class SignUpDto {
             value = "phone number",
             name = "phone",
             dataType = "String",
-            example = "+78005553535"
+            example = "8005553535"
     )
     private String phone;
 
