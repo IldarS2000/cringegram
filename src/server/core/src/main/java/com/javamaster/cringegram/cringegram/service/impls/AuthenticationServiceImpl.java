@@ -1,20 +1,20 @@
 package com.javamaster.cringegram.cringegram.service.impls;
 
-
 import com.javamaster.cringegram.cringegram.dto.SignUpDto;
 import com.javamaster.cringegram.cringegram.dto.UserDto;
+import com.javamaster.cringegram.cringegram.dto.UserExistsRequestDto;
+import com.javamaster.cringegram.cringegram.dto.UserExistsResponseDto;
 import com.javamaster.cringegram.cringegram.entity.user.UserEntity;
 import com.javamaster.cringegram.cringegram.exception.UserExistException;
 import com.javamaster.cringegram.cringegram.repository.UserEntityRepository;
-import com.javamaster.cringegram.cringegram.service.SignUpService;
+import com.javamaster.cringegram.cringegram.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class SignUpServiceImpl implements SignUpService {
-
+public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserEntityRepository userEntityRepository;
 
     private final PasswordEncoder passwordEncoder;
@@ -48,7 +48,14 @@ public class SignUpServiceImpl implements SignUpService {
                 .subscriptionCount(user.getSubscriptionCount())
                 .email(user.getEmail())
                 .build();
-        //return userMapper.mapToDto(userEntityRepository.save(user));
     }
 
+        @Override
+        public UserExistsResponseDto userExists (UserExistsRequestDto userExistsRequestDto){
+            boolean exists = userEntityRepository.existsUserEntityByEmail(userExistsRequestDto.getEmail());
+
+            return UserExistsResponseDto.builder().
+                    exists(exists)
+                    .build();
+        }
 }
