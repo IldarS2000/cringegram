@@ -1,12 +1,10 @@
 package com.javamaster.cringegram.cringegram.controller;
 
-import com.javamaster.cringegram.cringegram.dto.SignUpDto;
-import com.javamaster.cringegram.cringegram.dto.UserDto;
-import com.javamaster.cringegram.cringegram.dto.UserExistsRequestDto;
-import com.javamaster.cringegram.cringegram.dto.UserExistsResponseDto;
+import com.javamaster.cringegram.cringegram.dto.*;
 import com.javamaster.cringegram.cringegram.service.AuthenticationService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,7 +30,15 @@ public class AuthenticationController {
             value = "Creates new user. If operation is successfully then returns created user with id. Otherwise, returns custom error message"
     )
     @PostMapping("${url.signup}")
-    private UserDto signUp(@RequestBody @Valid SignUpDto signUpDto) {
+    public UserDto signUp(@RequestBody @Valid SignUpDto signUpDto) {
         return authenticationService.sighUp(signUpDto);
+    }
+
+    @ApiOperation(
+            value = "Authorization in system"
+    )
+    @PostMapping("${url.signin}")
+    public ResponseEntity<TokenDto> signIn(@RequestBody @Valid SignInDto signInDto) {
+        return ResponseEntity.ok(authenticationService.signIn(signInDto));
     }
 }
