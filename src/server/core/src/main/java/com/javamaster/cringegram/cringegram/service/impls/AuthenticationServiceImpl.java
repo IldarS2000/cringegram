@@ -5,6 +5,7 @@ import com.javamaster.cringegram.cringegram.entity.user.UserEntity;
 import com.javamaster.cringegram.cringegram.exception.UserExistException;
 import com.javamaster.cringegram.cringegram.repository.UserEntityRepository;
 import com.javamaster.cringegram.cringegram.service.AuthenticationService;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Optional;
 
@@ -78,11 +80,34 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-        public UserExistsResponseDto userExists (UserExistsRequestDto userExistsRequestDto){
-            boolean exists = userEntityRepository.existsUserEntityByEmail(userExistsRequestDto.getEmail());
+    public TokenDto isValidToken(TokenDto tokenDto) {
+        try {
+            Claims claims = parseToken(tokenDto.getToken(), secret);
+            String newToken = Jwts.builder()
+                    .setSubject(claims.getId())
+                    .claim("username", claims.get("username"))
+                    .signWith(SignatureAlgorithm.HS256, secret)
+                    .compact();
+            return new TokenDto(newToken);
 
-            return UserExistsResponseDto.builder().
-                    exists(exists)
-                    .build();
+        } catch (Exception e) {
+            return null;
         }
+    }
+
+    @Override
+    public UserExistsResponseDto userExists (UserExistsRequestDto userExistsRequestDto){
+        boolean exists = userEntityRepository.existsUserEntityByEmail(userExistsRequestDto.getEmail());
+
+        return UserExistsResponseDto.builder().
+                exists(exists)
+                .build();
+    }
+
+    private Claims parseToken(String token, String secret) {
+        return Jwts.parser()
+                .setSigningKey(secret)
+                .parseClaimsJws(token)
+                .getBody();
+    }
 }
