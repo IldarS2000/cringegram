@@ -1,5 +1,6 @@
 package com.javamaster.cringegram.cringegram.service;
 
+import com.javamaster.cringegram.cringegram.dto.UpdateAboutMeDto;
 import com.javamaster.cringegram.cringegram.dto.UpdateUsernameDto;
 import com.javamaster.cringegram.cringegram.dto.UserInfoDto;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,4 +11,6 @@ public interface AccountService {
     UserInfoDto updateUsername(UpdateUsernameDto updateUsernameDto, String token);
 
     UserInfoDto updateUserAvatar(MultipartFile image, String token);
+
+    UserInfoDto updateUserAboutMe(UpdateAboutMeDto updateAboutMeDto, String token);
 }
