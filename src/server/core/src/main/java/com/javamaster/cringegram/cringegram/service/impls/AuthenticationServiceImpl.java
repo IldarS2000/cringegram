@@ -29,20 +29,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDto sighUp(SignUpDto signUpDto) {
-        if (userEntityRepository.existsUserEntityByUsername(signUpDto.getUsername())) {
-            throw new UserExistException("User with this username already exists");
-        }
-        if (userEntityRepository.existsUserEntityByPhone(signUpDto.getPhone())) {
-            throw new UserExistException("User with this phone number already exists");
+    public UserDto signUp(SignUpDto signUpDto) {
+        if (userEntityRepository.existsUserEntityByPhone(signUpDto.getEmail())) {
+            throw new UserExistException("User with this email already exists");
         }
 
         UserEntity user =
                 UserEntity.builder()
-                        .username(signUpDto.getUsername())
-                        .aboutMe(signUpDto.getAboutMe())
                         .password(passwordEncoder.encode(signUpDto.getPassword()))
-                        .phone(signUpDto.getPhone())
                         .postCount(0)
                         .subscriptionCount(0)
                         .email(signUpDto.getEmail())

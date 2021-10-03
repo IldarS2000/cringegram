@@ -15,16 +15,6 @@ import javax.validation.constraints.*;
 @ApiModel("Form for user sign up")
 public class SignUpDto {
     @ApiModelProperty(
-            value = "username",
-            name = "username",
-            dataType = "String",
-            example = "username"
-    )
-    @NotNull
-    @NotEmpty(message = "Please, provide a username")
-    private String username;
-
-    @ApiModelProperty(
             value = "password",
             name = "password",
             dataType = "String",
@@ -35,29 +25,11 @@ public class SignUpDto {
     @Size(min = 6, max = 30)
     private String password;
 
-    @Pattern(regexp = "(^$|[0-9]{10})")
-    @NotNull
-    @NotEmpty(message = "Please, provide a phone")
-    @ApiModelProperty(
-            value = "phone number",
-            name = "phone",
-            dataType = "String",
-            example = "8005553535"
-    )
-    private String phone;
-
-    @ApiModelProperty(
-            value = "about me info",
-            name = "aboutMe",
-            dataType = "String"
-    )
-    private String aboutMe;
-
     @ApiModelProperty(
             value = "email",
             name = "email",
             dataType = "String",
-            example = "example@email.com"
+            example = "example@gusenkov.com"
     )
     @NotNull
     @NotEmpty(message = "Please, provide your email")

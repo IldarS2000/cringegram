@@ -32,7 +32,7 @@ public class AuthenticationController {
     )
     @PostMapping("${url.signup}")
     public UserDto signUp(@RequestBody @Valid SignUpDto signUpDto) {
-        return authenticationService.sighUp(signUpDto);
+        return authenticationService.signUp(signUpDto);
     }
 
     @ApiOperation(

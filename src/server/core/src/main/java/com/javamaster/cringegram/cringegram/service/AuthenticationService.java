@@ -7,7 +7,7 @@ public interface AuthenticationService {
 
     UserExistsResponseDto userExists(UserExistsRequestDto userExistsRequestDto);
 
-    UserDto sighUp(SignUpDto signUpDto);
+    UserDto signUp(SignUpDto signUpDto);
 
     TokenDto signIn(SignInDto signInDto);
 
