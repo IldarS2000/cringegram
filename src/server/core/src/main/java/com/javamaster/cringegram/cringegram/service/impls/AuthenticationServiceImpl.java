@@ -30,7 +30,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public UserDto signUp(SignUpDto signUpDto) {
-        if (userEntityRepository.existsUserEntityByPhone(signUpDto.getEmail())) {
+        if (userEntityRepository.existsUserEntityByEmail(signUpDto.getEmail())) {
             throw new UserExistException("User with this email already exists");
         }
 
@@ -46,7 +46,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return UserDto.builder()
                 .username(user.getUsername())
                 .aboutMe(user.getAboutMe())
-                .phone(user.getPhone())
                 .postCount(user.getPostCount())
                 .subscriptionCount(user.getSubscriptionCount())
                 .email(user.getEmail())

@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserDto {
     private Long id;
-    private String phone;
     private String username;
     private String aboutMe;
     private Integer postCount;
