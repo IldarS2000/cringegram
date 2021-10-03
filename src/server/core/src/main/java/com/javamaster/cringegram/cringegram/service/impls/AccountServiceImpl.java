@@ -3,18 +3,18 @@ package com.javamaster.cringegram.cringegram.service.impls;
 import com.javamaster.cringegram.cringegram.dto.UpdateUsernameDto;
 import com.javamaster.cringegram.cringegram.dto.UserInfoDto;
 import com.javamaster.cringegram.cringegram.entity.user.UserEntity;
-import com.javamaster.cringegram.cringegram.exception.NotFoundException;
 import com.javamaster.cringegram.cringegram.repository.UserEntityRepository;
 import com.javamaster.cringegram.cringegram.service.AccountService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import javassist.tools.web.BadHttpRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -33,7 +33,7 @@ public class AccountServiceImpl implements AccountService {
 
         Optional<UserEntity> userEntityOptional = userEntityRepository.findById(userId);
 
-        if (userEntityOptional.isPresent()){
+        if (userEntityOptional.isPresent()) {
             UserEntity user = userEntityOptional.get();
             return buildingUser(user);
         }
@@ -43,12 +43,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public UserInfoDto updateUsername(UpdateUsernameDto updateUsernameDto, String token) {
-        String tokenValue;
-        if (token != null && token.startsWith("Bearer ")) {
-            tokenValue = token.substring(7);
-        } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
-        }
+        String tokenValue = validateToken(token);
         Claims claims = parseToken(tokenValue, secret);
         UserEntity user = userEntityRepository.findByEmail(claims.get("email").toString());
         user.setUsername(updateUsernameDto.getUsername());
@@ -57,6 +52,21 @@ public class AccountServiceImpl implements AccountService {
 
         return buildingUser(user);
     }
+
+    @Override
+    public UserInfoDto updateUserAvatar(MultipartFile image, String token) {
+        try {
+            String tokenValue = validateToken(token);
+            Claims claims = parseToken(tokenValue, secret);
+            UserEntity user = userEntityRepository.findByEmail(claims.get("email").toString());
+            user.setAvatar(image.getBytes());
+            userEntityRepository.save(user);
+            return buildingUser(user);
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file");
+        }
+    }
+
 
     private UserInfoDto buildingUser(UserEntity user) {
         return UserInfoDto.builder()
@@ -67,6 +77,14 @@ public class AccountServiceImpl implements AccountService {
                 .postCount(user.getPostCount())
                 .subscriptionCount(user.getSubscriptionCount())
                 .build();
+    }
+
+    private String validateToken(String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            return token.substring(7);
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
+        }
     }
 
     private Claims parseToken(String token, String secret) {
