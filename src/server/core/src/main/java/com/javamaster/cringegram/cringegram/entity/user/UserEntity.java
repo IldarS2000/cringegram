@@ -22,9 +22,6 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "phone_number")
-    private String phone;
-
     @Column(name = "username")
     private String username;
 

@@ -9,10 +9,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AccountDto {
+public class UserInfoDto {
+    private Long id;
     private String username;
     private byte[] avatar;
     private String aboutMe;
     private Integer postCount;
     private Integer subscriptionCount;
+    private Integer subscribersCount;
 }
