@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.HttpEntityMethodProcessor;
 
 import javax.validation.Valid;
 
@@ -41,6 +42,14 @@ public class AccountController {
     @RequestMapping(value = "${url.updateUserAvatar}", method = RequestMethod.PUT, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UserInfoDto> updateUserAvatar(@RequestPart @Valid MultipartFile image, @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(accountService.updateUserAvatar(image, token));
+    }
+
+    @ApiOperation(
+            value = "Delete user avatar"
+    )
+    @DeleteMapping(value = "${url.updateUserAvatar}")
+    public ResponseEntity<Void> deleteUserAvatar(@RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(accountService.deleteUserAvatar(token));
     }
 
     @ApiOperation(
