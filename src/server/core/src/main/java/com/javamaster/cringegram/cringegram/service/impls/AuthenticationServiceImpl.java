@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
@@ -49,7 +48,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         userEntityRepository.save(user);
         String token = this.generateToken(user);
-        return this.buildingUser(user,token);
+        return this.buildingAuthDto(user,token);
     }
 
     @Override
@@ -62,7 +61,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             if (passwordEncoder.matches(signInDto.getPassword(), user.getPassword())) {
                 String token = this.generateToken(user);
-                return this.buildingUser(user, token);
+                return this.buildingAuthDto(user, token);
             } else throw new AccessDeniedException("Wrong email/password");
         } else throw new AccessDeniedException("User not found");
     }
@@ -73,7 +72,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             Claims claims = parseToken(token, secret);
             UserEntity user = userEntityRepository.findByEmail(claims.get("email").toString());
             String newToken = this.generateToken(user);
-            return buildingUser(user, newToken);
+            return buildingAuthDto(user, newToken);
 
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
@@ -106,7 +105,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .compact();
     }
 
-    private AuthDto buildingUser(UserEntity user, String token) {
+    private AuthDto buildingAuthDto(UserEntity user, String token) {
         return AuthDto.builder()
                 .id(user.getId())
                 .username(user.getUsername())
