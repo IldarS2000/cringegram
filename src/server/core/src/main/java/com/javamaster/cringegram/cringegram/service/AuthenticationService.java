@@ -1,15 +1,14 @@
 package com.javamaster.cringegram.cringegram.service;
 
 import com.javamaster.cringegram.cringegram.dto.*;
-import org.springframework.transaction.reactive.TransactionalOperatorExtensionsKt;
 
 public interface AuthenticationService {
 
     UserExistsResponseDto userExists(UserExistsRequestDto userExistsRequestDto);
 
-    UserDto signUp(SignUpDto signUpDto);
+    AuthDto signUp(SignUpDto signUpDto);
 
-    TokenDto signIn(SignInDto signInDto);
+    AuthDto signIn(SignInDto signInDto);
 
-    TokenDto isValidToken(TokenDto tokenDto);
+    AuthDto isValidToken(String token);
 }
