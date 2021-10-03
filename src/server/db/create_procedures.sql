@@ -1,15 +1,13 @@
 -- user
-create or replace procedure add_user(arg_phone_number char(15),
-                                     arg_name varchar(20),
-                                     arg_access_token text,
-                                     arg_refresh_token text)
+create or replace procedure add_user(arg_username varchar(30),
+                                     arg_email varchar(256),
+                                     arg_password varchar(128))
     language plpgsql
 as
 $$
 begin
-    insert into cringegram.public.user(phone_number, name, post_count, subscription_count,
-                                       access_token, refresh_token)
-    values (arg_phone_number, arg_name, 0, 0, arg_access_token, arg_refresh_token);
+    insert into cringegram.public.user(username, email, password, post_count, subscriber_count, subscription_count)
+    values (arg_username, arg_email, arg_password, 0, 0, 0);
 end;
 $$;
 
@@ -37,27 +35,13 @@ end;
 $$;
 
 create or replace procedure mod_user_about_me(arg_user_id int,
-                                              arg_about_me varchar(64))
+                                              arg_about_me varchar(128))
     language plpgsql
 as
 $$
 begin
     update cringegram.public.user
     set about_me = arg_about_me
-    where id = arg_user_id;
-end;
-$$;
-
-create or replace procedure mod_user_tokens(arg_user_id int,
-                                            arg_access_token text,
-                                            arg_refresh_token text)
-    language plpgsql
-as
-$$
-begin
-    update cringegram.public.user
-    set access_token  = arg_access_token,
-        refresh_token = arg_refresh_token
     where id = arg_user_id;
 end;
 $$;
