@@ -5,10 +5,7 @@ import com.javamaster.cringegram.cringegram.service.AuthenticationService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -31,20 +28,20 @@ public class AuthenticationController {
             value = "Creates new user. If operation is successfully then returns created user with id. Otherwise, returns custom error message"
     )
     @PostMapping("${url.signup}")
-    public UserDto signUp(@RequestBody @Valid SignUpDto signUpDto) {
-        return authenticationService.signUp(signUpDto);
+    public ResponseEntity<AuthDto> signUp(@RequestBody @Valid SignUpDto signUpDto) {
+        return ResponseEntity.ok(authenticationService.signUp(signUpDto));
     }
 
     @ApiOperation(
             value = "Authorization in system"
     )
     @PostMapping("${url.signin}")
-    public ResponseEntity<TokenDto> signIn(@RequestBody @Valid SignInDto signInDto) {
+    public ResponseEntity<AuthDto> signIn(@RequestBody @Valid SignInDto signInDto) {
         return ResponseEntity.ok(authenticationService.signIn(signInDto));
     }
 
     @GetMapping("${url.isValidToken}")
-    public ResponseEntity<TokenDto> isValidToken(TokenDto oldToken) {
+    public ResponseEntity<AuthDto> isValidToken(@RequestHeader("authorization") String oldToken) {
         return ResponseEntity.ok(authenticationService.isValidToken(oldToken));
     }
 }

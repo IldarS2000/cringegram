@@ -9,11 +9,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserDto {
+public class AuthDto {
     private Long id;
     private String username;
     private String aboutMe;
     private Integer postCount;
     private Integer subscriptionCount;
     private String email;
+
+    private String token;
+
 }
