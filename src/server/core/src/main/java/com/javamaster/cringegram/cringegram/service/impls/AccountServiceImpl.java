@@ -63,6 +63,14 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public Void deleteUserAvatar(String token) {
+        UserEntity user = validateToken(token);
+        user.setAvatar(null);
+        userEntityRepository.save(user);
+        return null;
+    }
+
+    @Override
     public UserInfoDto updateUserAboutMe(UpdateAboutMeDto updateAboutMeDto, String token) {
         UserEntity user = validateToken(token);
         user.setAboutMe(updateAboutMeDto.getAboutMe());

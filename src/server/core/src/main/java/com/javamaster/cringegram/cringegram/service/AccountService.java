@@ -12,5 +12,7 @@ public interface AccountService {
 
     UserInfoDto updateUserAvatar(MultipartFile image, String token);
 
+    Void deleteUserAvatar(String token);
+
     UserInfoDto updateUserAboutMe(UpdateAboutMeDto updateAboutMeDto, String token);
 }
