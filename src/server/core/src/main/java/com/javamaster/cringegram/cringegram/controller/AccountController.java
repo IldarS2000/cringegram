@@ -1,5 +1,6 @@
 package com.javamaster.cringegram.cringegram.controller;
 
+import com.javamaster.cringegram.cringegram.dto.UpdateAboutMeDto;
 import com.javamaster.cringegram.cringegram.dto.UpdateUsernameDto;
 import com.javamaster.cringegram.cringegram.dto.UserInfoDto;
 import com.javamaster.cringegram.cringegram.service.AccountService;
@@ -40,6 +41,14 @@ public class AccountController {
     @RequestMapping(value = "${url.updateUserAvatar}", method = RequestMethod.PUT, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UserInfoDto> updateUserAvatar(@RequestPart @Valid MultipartFile image, @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(accountService.updateUserAvatar(image, token));
+    }
+
+    @ApiOperation(
+            value = "Update user about me"
+    )
+    @PutMapping("${url.updateUserAboutMe}")
+    public ResponseEntity<UserInfoDto> updateUserAboutMe(@RequestBody @Valid UpdateAboutMeDto updateAboutMeDto, @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(accountService.updateUserAboutMe(updateAboutMeDto, token));
     }
 
 }

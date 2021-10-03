@@ -1,5 +1,6 @@
 package com.javamaster.cringegram.cringegram.service.impls;
 
+import com.javamaster.cringegram.cringegram.dto.UpdateAboutMeDto;
 import com.javamaster.cringegram.cringegram.dto.UpdateUsernameDto;
 import com.javamaster.cringegram.cringegram.dto.UserInfoDto;
 import com.javamaster.cringegram.cringegram.entity.user.UserEntity;
@@ -43,28 +44,30 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public UserInfoDto updateUsername(UpdateUsernameDto updateUsernameDto, String token) {
-        String tokenValue = validateToken(token);
-        Claims claims = parseToken(tokenValue, secret);
-        UserEntity user = userEntityRepository.findByEmail(claims.get("email").toString());
+        UserEntity user = validateToken(token);
         user.setUsername(updateUsernameDto.getUsername());
-
         userEntityRepository.save(user);
-
         return buildingUser(user);
     }
 
     @Override
     public UserInfoDto updateUserAvatar(MultipartFile image, String token) {
         try {
-            String tokenValue = validateToken(token);
-            Claims claims = parseToken(tokenValue, secret);
-            UserEntity user = userEntityRepository.findByEmail(claims.get("email").toString());
+            UserEntity user = validateToken(token);
             user.setAvatar(image.getBytes());
             userEntityRepository.save(user);
             return buildingUser(user);
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file");
         }
+    }
+
+    @Override
+    public UserInfoDto updateUserAboutMe(UpdateAboutMeDto updateAboutMeDto, String token) {
+        UserEntity user = validateToken(token);
+        user.setAboutMe(updateAboutMeDto.getAboutMe());
+        userEntityRepository.save(user);
+        return buildingUser(user);
     }
 
 
@@ -79,9 +82,11 @@ public class AccountServiceImpl implements AccountService {
                 .build();
     }
 
-    private String validateToken(String token) {
+    private UserEntity validateToken(String token) {
         if (token != null && token.startsWith("Bearer ")) {
-            return token.substring(7);
+            String tokenValue = token.substring(7);
+            Claims claims = parseToken(tokenValue, secret);
+            return userEntityRepository.findByEmail(claims.get("email").toString());
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
         }
