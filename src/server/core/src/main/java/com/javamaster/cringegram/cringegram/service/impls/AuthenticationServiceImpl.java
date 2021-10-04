@@ -69,8 +69,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public AuthDto isValidToken(String token) {
         try {
-            Claims claims = parseToken(token, secret);
-            UserEntity user = userEntityRepository.findByEmail(claims.get("email").toString());
+            UserEntity user = validateToken(token);
             String newToken = this.generateToken(user);
             return buildingAuthDto(user, newToken);
 
@@ -86,6 +85,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return UserExistsResponseDto.builder().
                 exists(exists)
                 .build();
+    }
+
+    private UserEntity validateToken(String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            String tokenValue = token.substring(7);
+            Claims claims = parseToken(tokenValue, secret);
+            return userEntityRepository.findByEmail(claims.get("email").toString());
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
+        }
     }
 
     private Claims parseToken(String token, String secret) {

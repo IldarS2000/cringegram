@@ -41,7 +41,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("${url.isValidToken}")
-    public ResponseEntity<AuthDto> isValidToken(@RequestHeader("authorization") String oldToken) {
+    public ResponseEntity<AuthDto> isValidToken(@RequestHeader("Authorization") String oldToken) {
         return ResponseEntity.ok(authenticationService.isValidToken(oldToken));
     }
 }
