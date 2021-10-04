@@ -13,11 +13,14 @@ import {Email} from './src/screens/Auth/Email';
 import {SignIn} from './src/screens/Auth/SignIn';
 import {SignUp} from './src/screens/Auth/SignUp';
 import {AuthStage} from './src/enums/auth-stage.enum';
+import {EnterUsername} from "./src/screens/EnterUsername";
+import { Settings } from './src/screens/Settings';
+import {EditProfile} from "./src/screens/EditProfile";
 
 const Stack = createNativeStackNavigator();
 
 const App = observer(() => {
-    const {authStore: {isAuth, isLoading, authMe}} = useStores();
+    const {authStore: {isAuth, isLoading, authMe}, profileStore: {username}} = useStores();
     const fontsLoaded = useMyFonts();
 
     useEffect(() => {
@@ -42,7 +45,15 @@ const App = observer(() => {
                         </Stack.Group>
                     ) : (
                         <Stack.Group>
-                            <Stack.Screen name='Profile' component={Profile}/>
+                            {!username ? (
+                                <Stack.Screen name='USERNAME' component={EnterUsername} />
+                            ) : (
+                                <>
+                                    <Stack.Screen name='PROFILE' component={Profile}/>
+                                    <Stack.Screen name='SETTINGS' component={Settings}/>
+                                    <Stack.Screen name='EDIT_PROFILE' component={EditProfile}/>
+                                </>
+                            )}
                         </Stack.Group>
                     )}
                 </Stack.Navigator>

@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useRef } from 'react'
-import { StyleSheet, Text, ViewStyle, Animated, TouchableWithoutFeedback } from 'react-native';
+import React, { FC, useRef } from 'react'
+import { StyleSheet, ViewStyle, Animated, TouchableWithoutFeedback } from 'react-native';
 import { Color } from '../../constants/colors';
 import { Fonts } from '../../constants/fonts';
 
@@ -8,19 +8,20 @@ interface Props {
     style?: ViewStyle;
     onPress?: () => void;
     disabled?: boolean;
+    color?: string;
 }
 
 enum ColorAnimatedValue {
     DEFAULT,
     PRESSED,
-    DISABLED
 }
 
-export const Button: FC<Props> = ({
+export const BigButton: FC<Props> = ({
     text,
     style,
     disabled = false,
-    onPress
+    onPress,
+    color = Color.BLUE100
 }: Props): JSX.Element => {
     const colorAnimation = useRef(new Animated.Value(ColorAnimatedValue.DEFAULT)).current;
 
@@ -38,23 +39,21 @@ export const Button: FC<Props> = ({
         }).start();
     };
 
-    useEffect(() => {
-        const colorValue = disabled ? ColorAnimatedValue.DISABLED : ColorAnimatedValue.DEFAULT;
-        Animated.timing(colorAnimation, {
-            toValue: colorValue,
-            useNativeDriver: false,
-            duration: 200
-        }).start();
-    }, [colorAnimation, disabled]);
-
     const colorInterpolation = colorAnimation.interpolate({
         inputRange: [
             ColorAnimatedValue.DEFAULT,
             ColorAnimatedValue.PRESSED,
-            ColorAnimatedValue.DISABLED
         ],
-        outputRange: [Color.GREEN300, Color.GREEN100, Color.BLACK200]
+        outputRange: [Color.WHITE, color]
     });
+
+    const textColorInterpolation = colorAnimation.interpolate({
+        inputRange: [
+            ColorAnimatedValue.DEFAULT,
+            ColorAnimatedValue.PRESSED
+        ],
+        outputRange: [color, Color.WHITE]
+    })
 
     return (
         <TouchableWithoutFeedback
@@ -62,13 +61,14 @@ export const Button: FC<Props> = ({
             disabled={disabled}
             onPressIn={onPressIn}
             onPressOut={onPressOut}
-            style={style}
+
         >
             <Animated.View style={{
                 ...styles.button,
+                ...style,
                 backgroundColor: colorInterpolation
             }}>
-                <Text style={styles.text}>{text}</Text>
+                <Animated.Text style={{...styles.text, color: textColorInterpolation}}>{text}</Animated.Text>
             </Animated.View>
         </TouchableWithoutFeedback>
     );
@@ -76,15 +76,17 @@ export const Button: FC<Props> = ({
 
 const styles = StyleSheet.create({
     button: {
-        borderRadius: 35,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: Color.BLACK300,
         height: 70,
-        minWidth: 70,
-        maxWidth: 70,
+        minWidth: 220,
+
         justifyContent: 'center',
         alignItems: 'center',
+        paddingHorizontal: 20,
     },
     text: {
         ...Fonts.button,
-        color: Color.WHITE,
     },
 });

@@ -1,0 +1,1 @@
+export const base64ImagePrefix = 'data:image/png;base64,';
