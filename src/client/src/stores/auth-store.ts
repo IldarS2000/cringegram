@@ -1,17 +1,24 @@
 import {MainStore} from '.';
-import {makeAutoObservable} from "mobx";
+import {autorun, makeAutoObservable} from "mobx";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {AuthStage} from '../enums/auth-stage.enum';
+import {authMe, checkUserExists, signIn, signUp} from "../services/api.service";
 
 export class AuthStore {
     isAuth: boolean = false;
     isLoading: boolean = true;
     isSubmitting: boolean = false;
-    authStage: AuthStage = AuthStage.PHONE_NUMBER;
+    email: string = '';
+    authStage: AuthStage = AuthStage.EMAIL;
     errorMessage: string | null = null;
 
     constructor(public mainStore: MainStore) {
         makeAutoObservable(this);
+        autorun(() => {
+           if (this.isAuth) {
+               this.setAuthStage(AuthStage.EMAIL);
+           }
+        });
     }
 
     setIsAuth = (isAuth: boolean): void => {
@@ -38,73 +45,43 @@ export class AuthStore {
         this.errorMessage = null;
     };
 
-    sendPhoneNumber = async (phoneNumber: string): Promise<void> => {
+    setEmail = (email: string): void => {
+        this.email = email;
+    };
+
+    checkUserExists = async (email: string): Promise<void> => {
         this.setIsSubmitting(true);
         try {
-            await new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    if (phoneNumber.length < 12) {
-                        reject(new Error('Введите верный номер телефона'));
-                    }
-                    resolve();
-                }, 1500);
-            });
-            this.setAuthStage(AuthStage.SECURITY_CODE);
+            const {data: { exists }} = await checkUserExists(email);
+            this.setAuthStage(exists ? AuthStage.SIGN_IN : AuthStage.SIGN_UP);
         } catch (e) {
             console.log(e.message);
-            this.setErrorMessage(e.message);
+            this.setErrorMessage('Email введен неверно');
         } finally {
             this.setIsSubmitting(false);
         }
     };
 
-    sendSecurityCode = async (securityCode: string): Promise<void> => {
+    signIn = async (password: string): Promise<void> => {
         this.setIsSubmitting(true);
         try {
-            const response = await new Promise((
-                resolve: (value: { registered: boolean, token?: string }) => void,
-                reject
-            ) => {
-                setTimeout(() => {
-                    if (securityCode === '1234') {
-                        resolve({registered: true, token: 'token'});
-                    } else if (securityCode === '1111') {
-                        resolve({registered: false});
-                    } else
-                        reject(new Error('Введен неверный код'));
-                }, 1500);
-            });
-            if (response.registered) {
-                this.setIsAuth(true);
-                await AsyncStorage.setItem('token', response.token!);
-            } else {
-                this.setAuthStage(AuthStage.NICKNAME);
-            }
-        } catch (e) {
-            console.log(e.message);
-            this.setErrorMessage(e.message);
-        } finally {
-            this.setIsSubmitting(false);
-        }
-    };
-
-    sendNickName = async (nickName: string): Promise<void> => {
-        this.setIsSubmitting(true);
-        try {
-            const response = await new Promise(
-                (resolve: (value: { token: string }) => void,
-                 reject
-                ) => {
-                    setTimeout(() => {
-                        if (nickName === 'kekwmek') {
-                            reject(new Error('Такое имя пользователя уже занято'));
-                        } else {
-                            resolve({token: 'token'});
-                        }
-                    }, 1500);
-                });
+            const { data: { token, ...user } } = await signIn(this.email, password);
+            await AsyncStorage.multiSet([['@token', token], ['@user', JSON.stringify(user)]]);
             this.setIsAuth(true);
-            await AsyncStorage.setItem('token', response.token);
+        } catch (e) {
+            console.log(e.message);
+            this.setErrorMessage('Неверный пароль');
+        } finally {
+            this.setIsSubmitting(false);
+        }
+    };
+
+    signUp = async (password: string): Promise<void> => {
+        this.setIsSubmitting(true);
+        try {
+            const { data: { token, ...user } } = await signUp(this.email, password);
+            await AsyncStorage.multiSet([['@token', token], ['@user', JSON.stringify(user)]]);
+            this.setIsAuth(true);
         } catch (e) {
             console.log(e.message);
             this.setErrorMessage(e.message);
@@ -116,14 +93,9 @@ export class AuthStore {
     logout = async () => {
         this.setIsSubmitting(true);
         try {
-            await new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve()
-                }, 500);
-            });
             this.setIsAuth(false);
-            await AsyncStorage.removeItem('token');
-            this.setAuthStage(AuthStage.PHONE_NUMBER);
+            await AsyncStorage.clear();
+            this.setAuthStage(AuthStage.EMAIL);
         } catch (e) {
             console.log(e.message);
             this.setErrorMessage(e.message);
@@ -135,16 +107,8 @@ export class AuthStore {
     authMe = async (): Promise<void> => {
         this.setIsLoading(true);
         try {
-            const token = await AsyncStorage.getItem('token');
-            await new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    if (token === 'token') {
-                        resolve();
-                    } else {
-                        reject(new Error('Не авторизован'));
-                    }
-                }, 1500);
-            });
+            const { data: { token, ...user } } = await authMe();
+            await AsyncStorage.multiSet([['@token', token], ['@user', JSON.stringify(user)]]);
             this.setIsAuth(true);
         } catch (e) {
             console.log(e);

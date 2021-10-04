@@ -3,7 +3,6 @@ import { View, StyleSheet, Text, ViewStyle, TextInput, KeyboardType, Animated } 
 import { Color } from '../../constants/colors';
 import { Fonts } from '../../constants/fonts';
 import { getStyleByCondition } from '../../utils/get-style-by-condition';
-import { TextInputMask } from 'react-native-masked-text';
 
 interface Props {
     label?: string;
@@ -12,14 +11,14 @@ interface Props {
     placeholder?: string;
     keyboardType?: KeyboardType;
     onChangeText?: (value: string) => void;
-    mask?: string;
     hasError?: boolean;
     disabled?: boolean;
     onSubmitEditing?: () => void;
     maxLength?: number;
     onFocus?: () => void;
-    autofocus?: boolean;
+    autoFocus?: boolean;
     onChange?: () => void;
+    secureTextEntry?: boolean;
 }
 
 enum BorderColorAnimatedValue {
@@ -45,14 +44,14 @@ export const Input: FC<Props> = ({
     placeholder,
     keyboardType,
     onChangeText,
-    mask,
     disabled = false,
     hasError = false,
     onSubmitEditing,
     maxLength,
     onFocus,
-    autofocus = false,
-    onChange
+    autoFocus = false,
+    onChange,
+    secureTextEntry = false,
 }: Props): JSX.Element => {
     const [focused, setFocused] = useState<boolean>(false);
     const borderColorAnimation = useRef(
@@ -66,12 +65,12 @@ export const Input: FC<Props> = ({
     ).current;
 
     useEffect(() => {
-        const colorValue = hasError 
-            ? BorderColorAnimatedValue.ERROR 
-            : focused 
-                ? BorderColorAnimatedValue.FOCUS 
+        const colorValue = hasError
+            ? BorderColorAnimatedValue.ERROR
+            : focused
+                ? BorderColorAnimatedValue.FOCUS
                 : BorderColorAnimatedValue.DEFAULT;
-        const widthValue = focused 
+        const widthValue = focused
             ? BorderWidthAnimatedValue.FOCUS
             : BorderWidthAnimatedValue.DEFAULT;
         const backgroundColor = disabled
@@ -124,14 +123,6 @@ export const Input: FC<Props> = ({
         outputRange: [22, 21],
     });
 
-    const InputComponent = mask ? TextInputMask : TextInput;
-    const maskedProps: any = !mask ? {} : {
-        type: 'custom',
-        options: {
-            mask
-        }
-    };
-
     return (
         <View style={{
             ...styles.wrapper,
@@ -149,9 +140,7 @@ export const Input: FC<Props> = ({
                 justifyContent: 'center',
                 paddingHorizontal: paddingInterpolation
             }}>
-                {/*@ts-ignore*/}
-                <InputComponent
-                    {...maskedProps}
+                <TextInput
                     style={{
                         ...styles.input,
                         ...getStyleByCondition(hasError, styles.error),
@@ -164,7 +153,6 @@ export const Input: FC<Props> = ({
                         onFocus?.();
                         setFocused(true);
                     }}
-                    autofocus={autofocus}
                     onChange={onChange}
                     onBlur={() => setFocused(false)}
                     placeholder={focused ? '' : placeholder}
@@ -173,6 +161,8 @@ export const Input: FC<Props> = ({
                     editable={!disabled}
                     onSubmitEditing={onSubmitEditing}
                     maxLength={maxLength}
+                    autoFocus={autoFocus}
+                    secureTextEntry={secureTextEntry}
                 />
             </Animated.View>
         </View>

@@ -1,5 +1,5 @@
 export enum AuthStage {
-    PHONE_NUMBER,
-    SECURITY_CODE,
-    NICKNAME,
+    EMAIL = 'EMAIL',
+    SIGN_IN = 'SIGN_IN',
+    SIGN_UP = 'SIGN_UP',
 }
