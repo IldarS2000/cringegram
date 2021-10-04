@@ -62,4 +62,14 @@ export const Fonts = StyleSheet.create({
         fontFamily: Font.RobotoSlab_400Regular,
         color: Color.BLACK500,
     },
+    username: {
+        fontWeight: 'bold',
+        fontSize: 18,
+        lineHeight: 21,
+        color: Color.BLACK500,
+    },
+    digits: {
+        fontSize: 18,
+        lineHeight: 21,
+    }
 });

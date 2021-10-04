@@ -37,12 +37,12 @@ export class AuthStore {
         this.isSubmitting = isSubmitting;
     };
 
-    setErrorMessage = (errorMessage: string): void => {
+    setErrorMessage = (errorMessage: string | null): void => {
         this.errorMessage = errorMessage;
     };
 
     clearErrorMessage = (): void => {
-        this.errorMessage = null;
+        this.setErrorMessage(null);
     };
 
     setEmail = (email: string): void => {
