@@ -1,9 +1,9 @@
 create or replace function ret_user(arg_user_id int)
     returns table
             (
-                username           varchar(20),
+                username           varchar(30),
                 avatar             bytea,
-                about_me           varchar(64),
+                about_me           varchar(128),
                 post_count         int,
                 subscriber_count   integer,
                 subscription_count integer
