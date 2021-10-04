@@ -2,36 +2,29 @@ import React, {useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
 import AppLoading from 'expo-app-loading';
 import {useMyFonts} from './src/hooks/useMyFonts';
-import {EnterPhoneNumber} from './src/screens/Auth/EnterPhoneNumber';
 import {StoreProvider} from './src/context/store-context';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {useStores} from "./src/hooks/useStores";
-import {EnterSecurityCode} from './src/screens/Auth/EnterSecurityCode';
-import { EnterNickName } from './src/screens/Auth/EnterNickName';
-import {Profile} from "./src/screens/Profile";
-import {observer} from "mobx-react-lite";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import {useStores} from './src/hooks/useStores';
+import {Profile} from './src/screens/Profile';
+import {observer} from 'mobx-react-lite';
 import './src/polyfills/array-buffer';
+import {Email} from './src/screens/Auth/Email';
+import {SignIn} from './src/screens/Auth/SignIn';
+import {SignUp} from './src/screens/Auth/SignUp';
+import {AuthStage} from './src/enums/auth-stage.enum';
 
 const Stack = createNativeStackNavigator();
 
 const App = observer(() => {
-    const {authStore: {isAuth, isLoading, authMe, setIsLoading}} = useStores();
+    const {authStore: {isAuth, isLoading, authMe}} = useStores();
     const fontsLoaded = useMyFonts();
 
     useEffect(() => {
         if (!isAuth) {
-            new Promise(async () => {
-                const token = await AsyncStorage.getItem('token');
-                if (token) {
-                    await authMe();
-                } else {
-                    setIsLoading(false);
-                }
-            });
+            authMe();
         }
-    }, [isAuth, isLoading]);
+    }, [isAuth]);
 
     if (!fontsLoaded || isLoading) {
         return <AppLoading/>
@@ -40,12 +33,12 @@ const App = observer(() => {
     return (
         <View style={styles.app}>
             <NavigationContainer>
-                <Stack.Navigator screenOptions={{headerShown: false}}>
+                <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName={AuthStage.EMAIL}>
                     {!isAuth ? (
                         <Stack.Group>
-                            <Stack.Screen name='Phone' component={EnterPhoneNumber}/>
-                            <Stack.Screen name='Code' component={EnterSecurityCode}/>
-                            <Stack.Screen name='Name' component={EnterNickName}/>
+                            <Stack.Screen name={AuthStage.EMAIL} component={Email}/>
+                            <Stack.Screen name={AuthStage.SIGN_IN} component={SignIn}/>
+                            <Stack.Screen name={AuthStage.SIGN_UP} component={SignUp}/>
                         </Stack.Group>
                     ) : (
                         <Stack.Group>

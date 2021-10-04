@@ -12,7 +12,7 @@ interface Props {
 }
 
 export const Profile: FC<Props> = observer(({navigation}) => {
-    const {authStore: {logout}, profileStore: {getUser, user, isLoading, posts, getUserPosts}} = useStores();
+    const {authStore: {logout}, profileStore: {getUser, user, posts, getUserPosts}} = useStores();
     const {width} = useWindowDimensions();
 
     useEffect(() => {
@@ -38,7 +38,7 @@ export const Profile: FC<Props> = observer(({navigation}) => {
                                 style={styles.avatar}
                             />
                         </View>
-                        <Text style={styles.name}>{user.name}</Text>
+                        <Text style={styles.name}>{user.username}</Text>
                         <Text style={styles.aboutMe}>{user.aboutMe}</Text>
                     </View>
                     <View style={styles.contentInfo}>
