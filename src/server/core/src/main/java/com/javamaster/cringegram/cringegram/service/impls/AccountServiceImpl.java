@@ -6,8 +6,7 @@ import com.javamaster.cringegram.cringegram.dto.UserInfoDto;
 import com.javamaster.cringegram.cringegram.entity.user.UserEntity;
 import com.javamaster.cringegram.cringegram.repository.UserEntityRepository;
 import com.javamaster.cringegram.cringegram.service.AccountService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import com.javamaster.cringegram.cringegram.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -21,10 +20,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
-    @Value("${jwt.secret}")
-    private String secret;
-
     private final UserEntityRepository userEntityRepository;
+    private final JwtService jwtService;
 
     @Override
     public UserInfoDto getUserInfo(Long userId) {
@@ -44,7 +41,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public UserInfoDto updateUsername(UpdateUsernameDto updateUsernameDto, String token) {
-        UserEntity user = validateToken(token);
+        UserEntity user = jwtService.claimTokenPayload(token);
         user.setUsername(updateUsernameDto.getUsername());
         userEntityRepository.save(user);
         return buildingUser(user);
@@ -53,18 +50,20 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public UserInfoDto updateUserAvatar(MultipartFile image, String token) {
         try {
-            UserEntity user = validateToken(token);
+            UserEntity user = jwtService.claimTokenPayload(token);
             user.setAvatar(image.getBytes());
             userEntityRepository.save(user);
             return buildingUser(user);
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file");
+        } catch (Exception e) {
+            throw e;
         }
     }
 
     @Override
     public Void deleteUserAvatar(String token) {
-        UserEntity user = validateToken(token);
+        UserEntity user = jwtService.claimTokenPayload(token);
         user.setAvatar(null);
         userEntityRepository.save(user);
         return null;
@@ -72,7 +71,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public UserInfoDto updateUserAboutMe(UpdateAboutMeDto updateAboutMeDto, String token) {
-        UserEntity user = validateToken(token);
+        UserEntity user = jwtService.claimTokenPayload(token);
         user.setAboutMe(updateAboutMeDto.getAboutMe());
         userEntityRepository.save(user);
         return buildingUser(user);
@@ -90,20 +89,4 @@ public class AccountServiceImpl implements AccountService {
                 .build();
     }
 
-    private UserEntity validateToken(String token) {
-        if (token != null && token.startsWith("Bearer ")) {
-            String tokenValue = token.substring(7);
-            Claims claims = parseToken(tokenValue, secret);
-            return userEntityRepository.findByEmail(claims.get("email").toString());
-        } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
-        }
-    }
-
-    private Claims parseToken(String token, String secret) {
-        return Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody();
-    }
 }

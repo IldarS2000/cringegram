@@ -5,6 +5,7 @@ import com.javamaster.cringegram.cringegram.entity.user.UserEntity;
 import com.javamaster.cringegram.cringegram.exception.UserExistException;
 import com.javamaster.cringegram.cringegram.repository.UserEntityRepository;
 import com.javamaster.cringegram.cringegram.service.AuthenticationService;
+import com.javamaster.cringegram.cringegram.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -25,10 +26,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    @Value("${jwt.secret}")
-    private String secret;
-
     private final UserEntityRepository userEntityRepository;
+    private final JwtService jwtService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -43,11 +42,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         .password(passwordEncoder.encode(signUpDto.getPassword()))
                         .postCount(0)
                         .subscriptionCount(0)
+                        .subscriberCount(0)
                         .email(signUpDto.getEmail())
                         .build();
 
         userEntityRepository.save(user);
-        String token = this.generateToken(user);
+        String token = jwtService.generateToken(user);
         return this.buildingAuthDto(user,token);
     }
 
@@ -60,7 +60,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             UserEntity user = userOptional.get();
 
             if (passwordEncoder.matches(signInDto.getPassword(), user.getPassword())) {
-                String token = this.generateToken(user);
+                String token = jwtService.generateToken(user);
                 return this.buildingAuthDto(user, token);
             } else throw new AccessDeniedException("Wrong email/password");
         } else throw new AccessDeniedException("User not found");
@@ -69,8 +69,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public AuthDto isValidToken(String token) {
         try {
-            UserEntity user = validateToken(token);
-            String newToken = this.generateToken(user);
+            UserEntity user = jwtService.claimTokenPayload(token);
+            String newToken = jwtService.generateToken(user);
             return buildingAuthDto(user, newToken);
 
         } catch (Exception e) {
@@ -85,33 +85,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return UserExistsResponseDto.builder().
                 exists(exists)
                 .build();
-    }
-
-    private UserEntity validateToken(String token) {
-        if (token != null && token.startsWith("Bearer ")) {
-            String tokenValue = token.substring(7);
-            Claims claims = parseToken(tokenValue, secret);
-            return userEntityRepository.findByEmail(claims.get("email").toString());
-        } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
-        }
-    }
-
-    private Claims parseToken(String token, String secret) {
-        return Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    private String generateToken(UserEntity user){
-        Date date = Date.from(LocalDate.now().plusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant());
-        return Jwts.builder()
-                .setSubject(user.getId().toString())
-                .claim("email",user.getEmail())
-                .signWith(SignatureAlgorithm.HS256, secret)
-                .setExpiration(date)
-                .compact();
     }
 
     private AuthDto buildingAuthDto(UserEntity user, String token) {
