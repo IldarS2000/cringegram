@@ -36,7 +36,6 @@ export const Email: FC<Props> = observer(({navigation}) => {
                 hasError={!!errorMessage}
                 onSubmitEditing={handleButtonPress}
                 disabled={isSubmitting}
-                maxLength={20}
                 keyboardType='email-address'
                 autoFocus={true}
             />

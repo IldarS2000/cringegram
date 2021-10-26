@@ -40,6 +40,9 @@ public class UserEntity {
     @Column(name = "subscription_count")
     private Integer subscriptionCount;
 
+    @Column(name = "subscriber_count")
+    private Integer subscriberCount;
+
     @Column(name = "email")
     private String email;
 
