@@ -34,6 +34,18 @@ public class JwtServiceImpl implements JwtService {
         }
     }
 
+    public boolean isValidToken(String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            String tokenValue = token.substring(7);
+            Claims claims = parseToken(tokenValue, secret);
+            UserEntity user =  userEntityRepository.findByEmail(claims.get("email").toString());
+            if (user != null) {
+                return true;
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
+    }
+
     public Claims parseToken(String token, String secret) {
         return Jwts.parser()
                 .setSigningKey(secret)

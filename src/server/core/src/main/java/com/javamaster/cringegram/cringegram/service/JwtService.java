@@ -10,4 +10,5 @@ public interface JwtService {
 
     public String generateToken(UserEntity user);
 
+    public boolean isValidToken(String token);
 }
