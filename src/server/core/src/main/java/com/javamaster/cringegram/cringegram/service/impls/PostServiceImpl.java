@@ -2,6 +2,7 @@ package com.javamaster.cringegram.cringegram.service.impls;
 
 import com.javamaster.cringegram.cringegram.dto.CreatePostDto;
 import com.javamaster.cringegram.cringegram.dto.PostDto;
+import com.javamaster.cringegram.cringegram.dto.UpdatePostDto;
 import com.javamaster.cringegram.cringegram.entity.PostEntity;
 import com.javamaster.cringegram.cringegram.entity.user.UserEntity;
 import com.javamaster.cringegram.cringegram.repository.PostEntityRepository;
@@ -10,11 +11,11 @@ import com.javamaster.cringegram.cringegram.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +42,55 @@ public class PostServiceImpl implements PostService {
         }
     }
 
+    @Override
+    public PostDto updatePost(UpdatePostDto updatePostDto, String token) {
+        try {
+            boolean isValidToken = jwtService.isValidToken(token);
+            if (!isValidToken) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file");
+            }
+            PostEntity post = postEntityRepository.getById(updatePostDto.getId());
+            post.setPhoto(updatePostDto.getPhoto().getBytes());
+            post.setDescription(updatePostDto.getDescription());
+            post = postEntityRepository.save(post);
+            return buildPostDto(post);
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file");
+        }
+    }
+
+    @Override
+    public List<PostDto> getAllUserPosts(Long userId, String token) {
+        boolean isValidToken = jwtService.isValidToken(token);
+        if (!isValidToken) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file");
+        }
+        List<PostEntity> posts = postEntityRepository.getAllByUserId(userId);
+
+        return buildPostDtos(posts);
+    }
+
+    @Override
+    public PostDto getPostById(Long postId, String token) {
+        boolean isValidToken = jwtService.isValidToken(token);
+        if (!isValidToken) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file");
+        }
+        PostEntity post = postEntityRepository.getById(postId);
+
+        return buildPostDto(post);
+    }
+
+    @Override
+    public Void deletePost(Long postId, String token) {
+        boolean isValidToken = jwtService.isValidToken(token);
+        if (!isValidToken) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file");
+        }
+        postEntityRepository.deleteById(postId);
+        return null;
+    }
+
 
     private PostDto buildPostDto(PostEntity post) {
         return PostDto.builder()
@@ -51,5 +101,9 @@ public class PostServiceImpl implements PostService {
                 .description(post.getDescription())
                 .likeCount(post.getLikeCount())
                 .build();
+    }
+
+    private List<PostDto> buildPostDtos(List<PostEntity> postEntities) {
+        return (List<PostDto>) postEntities.stream().map(postEntity -> buildPostDto(postEntity));
     }
 }
