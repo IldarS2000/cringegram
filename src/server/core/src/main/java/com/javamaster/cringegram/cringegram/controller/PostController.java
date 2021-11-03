@@ -31,6 +31,14 @@ public class PostController {
     }
 
     @ApiOperation(
+            value = "get all posts"
+    )
+    @GetMapping(path = "${url.getAllPosts}")
+    public List<PostDto> getAllPosts( @RequestHeader("Authorization") String token) {
+        return postService.getAllPosts(token);
+    }
+
+    @ApiOperation(
             value = "get post by user id"
     )
     @GetMapping(path = "${url.getPostById}")
@@ -62,6 +70,4 @@ public class PostController {
     public ResponseEntity<Void> deletePost(@Valid @RequestParam("postId") Long postId, @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(postService.deletePost(postId, token));
     }
-
-
 }
