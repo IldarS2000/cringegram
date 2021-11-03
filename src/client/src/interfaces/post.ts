@@ -4,4 +4,5 @@ export interface Post {
     photo: string;
     description?: string;
     likeCount: number;
+    createTimestamp: Date;
 }

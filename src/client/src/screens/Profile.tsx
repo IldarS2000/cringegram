@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from 'react'
+import React, {FC, useEffect, useState} from 'react'
 import {FlatList, Image, StyleSheet, TouchableWithoutFeedback, useWindowDimensions} from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {NavigationScreenProp} from "react-navigation";
@@ -14,28 +14,39 @@ import SubscriptionsIcon from './../../assets/svg/subscriptions.svg';
 import PostsIcon from './../../assets/svg/posts.svg';
 import {SmallButton} from "../components/UI/SmallButton";
 import AddIcon from './../../assets/svg/add.svg';
+import {AddPostModal} from "../components/AddPostModal";
 
 interface Props {
     navigation: NavigationScreenProp<any>
 }
 
 export const Profile: FC<Props> = observer(({navigation}) => {
-    const {profileStore: {getUser, user, posts, getUserPosts}} = useStores();
+    const {profileStore: {getUser, user, posts, getUserPosts, postCount}} = useStores();
     const {width} = useWindowDimensions();
+    const [showAddPostModal, setShowAddPostModal] = useState(false);
 
     useEffect(() => {
-        getUser();
-        getUserPosts()
+        getUser().then(() => {
+            getUserPosts(user!.id);
+        });
     }, []);
 
-    const handleSettingsClick = () => {
+    const handleSettingsPress = () => {
         navigation.navigate('SETTINGS') ;
+    };
+
+    const handleAddPress = () => {
+        setShowAddPostModal(true);
+    };
+
+    const hideModal = () => {
+        setShowAddPostModal(false);
     };
 
     return (
         <View style={styles.screen}>
             <TouchableWithoutFeedback
-                onPress={handleSettingsClick}
+                onPress={handleSettingsPress}
             >
                 <SettingsIcon width={24} height={24} fill={Color.BLACK500} style={styles.settings}/>
             </TouchableWithoutFeedback>
@@ -64,7 +75,7 @@ export const Profile: FC<Props> = observer(({navigation}) => {
                         </View>
                         <View style={styles.infoItem}>
                             <PostsIcon width={24} height={20} fill={Color.BLUE300}/>
-                            <Text style={styles.infoText}>{user.postCount || 0}</Text>
+                            <Text style={styles.infoText}>{postCount || 0}</Text>
                         </View>
                     </View>
                     <FlatList
@@ -81,7 +92,7 @@ export const Profile: FC<Props> = observer(({navigation}) => {
 
                                 }}>
                                     <Image
-                                        source={{uri: item.photo}}
+                                        source={{uri: `data:image/png;base64,${item.photo}`}}
                                         style={{
                                             ...styles.postPhoto,
                                             width: width / 2,
@@ -94,7 +105,12 @@ export const Profile: FC<Props> = observer(({navigation}) => {
                     />
                 </>
             )}
-            <SmallButton style={styles.addButton} icon={<AddIcon width={24} height={24} fill={Color.BLUE300} />} />
+            <SmallButton
+                style={styles.addButton}
+                icon={<AddIcon width={24} height={24} fill={Color.BLUE300} />}
+                onPress={handleAddPress}
+            />
+            <AddPostModal visible={showAddPostModal} onRequestClose={hideModal} />
         </View>
     );
 });
