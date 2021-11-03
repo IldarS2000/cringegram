@@ -26,7 +26,7 @@ public class PostController {
             value = "get all user posts"
     )
     @GetMapping(path = "${url.getAllUserPosts}")
-    public List<PostDto> getAllUserPosts(@Valid @RequestParam Long userId, @RequestHeader("Authorization") String token) {
+    public List<PostDto> getAllUserPosts(@Valid @PathVariable("userId") Long userId, @RequestHeader("Authorization") String token) {
         return postService.getAllUserPosts(userId, token);
     }
 
