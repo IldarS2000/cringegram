@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -104,6 +105,6 @@ public class PostServiceImpl implements PostService {
     }
 
     private List<PostDto> buildPostDtos(List<PostEntity> postEntities) {
-        return (List<PostDto>) postEntities.stream().map(postEntity -> buildPostDto(postEntity));
+        return postEntities.stream().map(this::buildPostDto).collect(Collectors.toList());
     }
 }
