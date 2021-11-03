@@ -46,10 +46,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDto updatePost(UpdatePostDto updatePostDto, String token) {
         try {
-            boolean isValidToken = jwtService.isValidToken(token);
-            if (!isValidToken) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file");
-            }
+            jwtService.isValidToken(token);
             PostEntity post = postEntityRepository.getById(updatePostDto.getId());
             post.setPhoto(updatePostDto.getPhoto().getBytes());
             post.setDescription(updatePostDto.getDescription());
@@ -62,21 +59,22 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostDto> getAllUserPosts(Long userId, String token) {
-        boolean isValidToken = jwtService.isValidToken(token);
-        if (!isValidToken) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file");
-        }
+        jwtService.isValidToken(token);
         List<PostEntity> posts = postEntityRepository.getAllByUserId(userId);
+
+        return buildPostDtos(posts);
+    }
+
+    public List<PostDto> getAllPosts(String token) {
+        jwtService.isValidToken(token);
+        List<PostEntity> posts = postEntityRepository.getAll();
 
         return buildPostDtos(posts);
     }
 
     @Override
     public PostDto getPostById(Long postId, String token) {
-        boolean isValidToken = jwtService.isValidToken(token);
-        if (!isValidToken) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file");
-        }
+        jwtService.isValidToken(token);
         PostEntity post = postEntityRepository.getById(postId);
 
         return buildPostDto(post);
