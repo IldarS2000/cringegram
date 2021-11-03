@@ -16,6 +16,8 @@ import {AuthStage} from './src/enums/auth-stage.enum';
 import {EnterUsername} from "./src/screens/EnterUsername";
 import { Settings } from './src/screens/Settings';
 import {EditProfile} from "./src/screens/EditProfile";
+import {Developers} from "./src/screens/Developers";
+import {About} from "./src/screens/About";
 
 const Stack = createNativeStackNavigator();
 
@@ -52,6 +54,8 @@ const App = observer(() => {
                                     <Stack.Screen name='PROFILE' component={Profile}/>
                                     <Stack.Screen name='SETTINGS' component={Settings}/>
                                     <Stack.Screen name='EDIT_PROFILE' component={EditProfile}/>
+                                    <Stack.Screen name='DEVELOPERS' component={Developers} />
+                                    <Stack.Screen name='ABOUT' component={About} />
                                 </>
                             )}
                         </Stack.Group>

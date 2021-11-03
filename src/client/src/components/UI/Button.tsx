@@ -82,6 +82,7 @@ const styles = StyleSheet.create({
         maxWidth: 70,
         justifyContent: 'center',
         alignItems: 'center',
+        elevation: 15,
     },
     text: {
         ...Fonts.button,

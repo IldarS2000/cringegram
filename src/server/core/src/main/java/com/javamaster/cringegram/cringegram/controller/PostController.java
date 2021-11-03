@@ -51,7 +51,6 @@ public class PostController {
     )
     @RequestMapping(path = "${url.createPost}", method = POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<PostDto> addPost(@Valid @ModelAttribute CreatePostDto createPostDto, @RequestHeader("Authorization") String token) {
-        System.out.println(createPostDto);
         return ResponseEntity.ok(postService.addPost(createPostDto, token));
     }
 

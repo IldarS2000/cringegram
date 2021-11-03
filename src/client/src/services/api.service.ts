@@ -4,6 +4,7 @@ import {UserExistsResponse} from "../interfaces/dto/user-exists-response";
 import {AuthResponse} from "../interfaces/dto/auth-response";
 import {UserInfoResponse} from "../interfaces/dto/user-info-response";
 import {FileRequest} from "../interfaces/file-request";
+import {Post} from "../interfaces/post";
 
 export const checkUserExists = (email: string): AxiosPromise<UserExistsResponse> =>
     axiosInstance.post('/userexists', {email});
@@ -31,3 +32,13 @@ export const updateUserAvatar = (image: FileRequest): AxiosPromise<UserInfoRespo
     formData.append('image', image as unknown as Blob);
     return axiosInstance.put('/user/avatar', formData);
 };
+
+export const addPost = (photo: FileRequest, description: string): AxiosPromise<Post> => {
+    const formData = new FormData();
+    formData.append('photo', photo as unknown as Blob);
+    formData.append('description', description);
+    return axiosInstance.post('/post', formData);
+};
+
+export const getAllUserPosts = (userId: number): AxiosPromise<Array<Post>> =>
+    axiosInstance.get(`/posts/${userId}`);

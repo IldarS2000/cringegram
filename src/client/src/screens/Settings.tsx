@@ -24,14 +24,22 @@ export const Settings: FC<Props> = observer(({navigation}) => {
         navigation.navigate('EDIT_PROFILE');
     };
 
+    const handleAboutPress = () => {
+        navigation.navigate('ABOUT');
+    };
+
+    const handleDevelopersPress = () => {
+        navigation.navigate('DEVELOPERS');
+    };
+
     return (
         <View style={styles.screen}>
             <SettingsIcon width={75} height={75} fill={Color.BLACK500} style={styles.icon} />
             <View style={styles.buttons}>
                 <View>
                     <BigButton text='Изменить профиль' style={styles.button} onPress={handleEditPress}/>
-                    <BigButton text='Разработчики' style={styles.button} />
-                    <BigButton text='О Cringegram' />
+                    <BigButton text='Разработчики' style={styles.button} onPress={handleDevelopersPress} />
+                    <BigButton text='О Cringegram' onPress={handleAboutPress} />
                 </View>
                 <BigButton text='Выйти' color={Color.ORANGE300} onPress={logout}/>
             </View>

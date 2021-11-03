@@ -4,7 +4,14 @@ import {Post} from '../interfaces/post';
 import {getMockUserPosts} from '../utils/mock-user-posts';
 import {isUserInfoResponse, UserInfoResponse} from '../interfaces/dto/user-info-response';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {getUserInfo, updateUserAboutMe, updateUserAvatar, updateUsername} from "../services/api.service";
+import {
+    addPost,
+    getAllUserPosts,
+    getUserInfo,
+    updateUserAboutMe,
+    updateUserAvatar,
+    updateUsername
+} from "../services/api.service";
 import {ImageInfo} from "expo-image-picker/build/ImagePicker.types";
 import {FileRequest} from "../interfaces/file-request";
 
@@ -48,6 +55,10 @@ export class ProfileStore {
         return this.user?.username;
     }
 
+    get postCount(): number {
+        return this.posts ? this.posts.length : 0;
+    }
+
     getUser = async (): Promise<void> => {
         this.setIsLoading(true);
         try {
@@ -68,10 +79,11 @@ export class ProfileStore {
         }
     };
 
-    getUserPosts = async (): Promise<void> => {
+    getUserPosts = async (userId: number): Promise<void> => {
         this.setIsLoading(true);
         try {
-            const posts = await getMockUserPosts();
+            const { data: posts } = await getAllUserPosts(userId);
+            console.log(posts)
             this.setPosts(posts);
         } catch (e) {
             console.log(e.message);
@@ -117,6 +129,23 @@ export class ProfileStore {
             const {data: userInfo} = await updateUserAvatar(file);
             this.setUser(userInfo);
             await AsyncStorage.setItem('@user', JSON.stringify(userInfo));
+        } catch (e) {
+            console.log(e.message);
+        } finally {
+            this.setIsLoading(false);
+        }
+    };
+
+    addPost = async (imageInfo: ImageInfo, description: string): Promise<void> => {
+        this.setIsLoading(true);
+        try {
+            const file: FileRequest = {
+                uri: imageInfo.uri,
+                type: 'image/jpeg',
+                name: 'avatar.jpeg'
+            };
+            const {data: post} = await addPost(file, description);
+            this.posts?.unshift(post);
         } catch (e) {
             console.log(e.message);
         } finally {
