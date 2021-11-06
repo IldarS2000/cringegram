@@ -77,6 +77,12 @@ public class AccountServiceImpl implements AccountService {
         return buildingUser(user);
     }
 
+    @Override
+    public byte[] getUserAvatar(Long userId) {
+        UserEntity user = userEntityRepository.getById(userId);
+        return user.getAvatar();
+    }
+
 
     private UserInfoDto buildingUser(UserEntity user) {
         return UserInfoDto.builder()

@@ -18,6 +18,7 @@ import { Settings } from './src/screens/Settings';
 import {EditProfile} from "./src/screens/EditProfile";
 import {Developers} from "./src/screens/Developers";
 import {About} from "./src/screens/About";
+import {Feed} from "./src/screens/Feed";
 
 const Stack = createNativeStackNavigator();
 
@@ -56,6 +57,7 @@ const App = observer(() => {
                                     <Stack.Screen name='EDIT_PROFILE' component={EditProfile}/>
                                     <Stack.Screen name='DEVELOPERS' component={Developers} />
                                     <Stack.Screen name='ABOUT' component={About} />
+                                    <Stack.Screen name='FEED' component={Feed} />
                                 </>
                             )}
                         </Stack.Group>

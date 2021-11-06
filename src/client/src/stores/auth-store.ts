@@ -95,6 +95,7 @@ export class AuthStore {
         try {
             this.setIsAuth(false);
             await AsyncStorage.clear();
+            console.log(await AsyncStorage.getAllKeys())
             this.setAuthStage(AuthStage.EMAIL);
         } catch (e) {
             console.log(e.message);

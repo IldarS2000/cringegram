@@ -63,6 +63,8 @@ export const AddPostModal: FC<Props> = observer(({ visible, onRequestClose }: Pr
 
     const handlePostPress = () => {
         image && addPost(image, description);
+        setDescription('');
+        setImage(null);
         onRequestClose();
     };
 
@@ -80,20 +82,22 @@ export const AddPostModal: FC<Props> = observer(({ visible, onRequestClose }: Pr
                         ...{ height: textFocused ? 100 : '100%' }
                     }} />
                 </TouchableWithoutFeedback>
-                <View style={{
-                    ...styles.textWrapper,
-                    maxHeight: textFocused ? height - 100 : height - 300
-                }}>
-                    <TextInput
-                        multiline
-                        style={styles.text}
-                        onFocus={toggleTextFocused}
-                        onBlur={toggleTextFocused}
-                        maxLength={128}
-                        onChangeText={setDescription}
-                        value={description}
-                    />
-                </View>
+                <TouchableWithoutFeedback onPress={toggleTextFocused}>
+                    <View style={{
+                        ...styles.textWrapper,
+                        maxHeight: textFocused ? height - 100 : height - 360
+                    }}>
+                        <TextInput
+                            multiline
+                            style={styles.text}
+                            // onFocus={toggleTextFocused}
+                            // onBlur={toggleTextFocused}
+                            maxLength={128}
+                            onChangeText={setDescription}
+                            value={description}
+                        />
+                    </View>
+                </TouchableWithoutFeedback>
                 <TouchableWithoutFeedback onPress={handlePostPress}>
                     <View style={styles.button}>
                         <EditIcon fill={Color.BLUE200} height={43} width={43} />
@@ -114,7 +118,7 @@ const styles = StyleSheet.create({
     image: {
         backgroundColor: Color.BLACK500,
         width: '100%',
-        maxHeight: 300,
+        maxHeight: 360,
         height: '100%',
     },
     textWrapper: {

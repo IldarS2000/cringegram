@@ -44,6 +44,15 @@ public class AccountController {
         return ResponseEntity.ok(accountService.updateUserAvatar(image, token));
     }
 
+
+    @ApiOperation(
+            value = "Get user avatar"
+    )
+    @GetMapping("${url.getUserAvatar}")
+    public byte[] getUserAvatar(@RequestParam("userId") Long userId) {
+        return accountService.getUserAvatar(userId);
+    }
+
     @ApiOperation(
             value = "Delete user avatar"
     )

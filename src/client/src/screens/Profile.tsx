@@ -14,37 +14,60 @@ import SubscriptionsIcon from './../../assets/svg/subscriptions.svg';
 import PostsIcon from './../../assets/svg/posts.svg';
 import {SmallButton} from "../components/UI/SmallButton";
 import AddIcon from './../../assets/svg/add.svg';
+import EyeIcon from '../images/eye.svg';
 import {AddPostModal} from "../components/AddPostModal";
+import {PostPhoto} from "../components/PostPhoto";
+import {PhotoModal} from "../components/PhotoModal";
+import {Post} from "../interfaces/post";
+
 
 interface Props {
-    navigation: NavigationScreenProp<any>
+    navigation: NavigationScreenProp<any>;
 }
 
 export const Profile: FC<Props> = observer(({navigation}) => {
-    const {profileStore: {getUser, user, posts, getUserPosts, postCount}} = useStores();
+    const {profileStore: {getUser, user, sortedPosts: posts, getUserPosts, postCount}} = useStores();
     const {width} = useWindowDimensions();
     const [showAddPostModal, setShowAddPostModal] = useState(false);
+    const [showPhotoModal, setShowPhotoModal] = useState<Post | null>(null);
 
     useEffect(() => {
-        getUser().then(() => {
-            getUserPosts(user!.id);
-        });
+        getUser();
     }, []);
+
+    useEffect(() => {
+        if (user) {
+            getUserPosts(user.id);
+        }
+    }, [user]);
 
     const handleSettingsPress = () => {
         navigation.navigate('SETTINGS') ;
+    };
+
+    const handleFeedButtonPress = () => {
+        navigation.navigate('FEED') ;
     };
 
     const handleAddPress = () => {
         setShowAddPostModal(true);
     };
 
-    const hideModal = () => {
-        setShowAddPostModal(false);
+    const hideAddPostModal = () => setShowAddPostModal(false);
+
+    const hidePhotoModal = () => setShowPhotoModal(null);
+
+    const handlePhotoPress = (post: Post) => {
+        setShowPhotoModal(post);
     };
 
     return (
         <View style={styles.screen}>
+            <TouchableWithoutFeedback
+                onPress={handleFeedButtonPress}
+            >
+                <EyeIcon width={24} height={24} fill={Color.BLACK500} style={styles.feedButton}/>
+            </TouchableWithoutFeedback>
             <TouchableWithoutFeedback
                 onPress={handleSettingsPress}
             >
@@ -80,26 +103,13 @@ export const Profile: FC<Props> = observer(({navigation}) => {
                     </View>
                     <FlatList
                         style={styles.posts}
+                        contentContainerStyle={styles.postsContainer}
                         numColumns={2}
                         data={toJS(posts)}
                         keyExtractor={({id}) => `${id}`}
                         renderItem={({item}) => {
                             return (
-                                <View style={{
-                                    height: width / 2,
-                                    width: width / 2,
-                                    backgroundColor: 'black'
-
-                                }}>
-                                    <Image
-                                        source={{uri: `data:image/png;base64,${item.photo}`}}
-                                        style={{
-                                            ...styles.postPhoto,
-                                            width: width / 2,
-                                            height: width / 2
-                                        }}
-                                    />
-                                </View>
+                                <PostPhoto post={item} onPress={() => handlePhotoPress(item)} />
                             )
                         }}
                     />
@@ -110,7 +120,8 @@ export const Profile: FC<Props> = observer(({navigation}) => {
                 icon={<AddIcon width={24} height={24} fill={Color.BLUE300} />}
                 onPress={handleAddPress}
             />
-            <AddPostModal visible={showAddPostModal} onRequestClose={hideModal} />
+            <AddPostModal visible={showAddPostModal} onRequestClose={hideAddPostModal} />
+            <PhotoModal visible={!!showPhotoModal} onRequestClose={hidePhotoModal} post={showPhotoModal!} />
         </View>
     );
 });
@@ -122,10 +133,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 40,
     },
+    feedButton: {
+        alignSelf: 'flex-start',
+        left: 15,
+        position: 'absolute'
+    },
     settings: {
-        ...Fonts.label,
         alignSelf: 'flex-end',
-        right: 14,
+        right: 15,
         position: 'absolute'
     },
     info: {
@@ -167,6 +182,7 @@ const styles = StyleSheet.create({
     },
     infoText: {
         ...Fonts.digits,
+        marginLeft: 8,
     },
     subCount: {
         ...Fonts.paragraph
@@ -175,7 +191,10 @@ const styles = StyleSheet.create({
         ...Fonts.paragraph
     },
     posts: {
-        marginBottom: 40
+        marginBottom: 40,
+    },
+    postsContainer: {
+        alignContent: 'flex-start',
     },
     postPhoto: {
         resizeMode: 'cover',
@@ -184,5 +203,5 @@ const styles = StyleSheet.create({
     addButton: {
         position: 'absolute',
         bottom: 60,
-    }
+    },
 });
