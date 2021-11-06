@@ -18,11 +18,6 @@ export const EditProfile: FC<Props> = observer(({navigation}) => {
     const {profileStore: {getUser, getUserPosts, user, updateUserAvatar, isLoading, updateUserAboutMe}} = useStores();
     const [aboutMe, setAboutMe] = useState<string | null>(user?.aboutMe || null);
 
-    useEffect(() => {
-        getUser();
-        getUserPosts()
-    }, []);
-
     const handleImageChange = (image: ImageInfo) => {
         updateUserAvatar(image);
     };

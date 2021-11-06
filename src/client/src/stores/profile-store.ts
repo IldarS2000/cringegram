@@ -1,8 +1,8 @@
 import {MainStore} from '.';
-import {autorun, makeAutoObservable} from 'mobx';
+import {autorun, makeAutoObservable, when} from 'mobx';
 import {Post} from '../interfaces/post';
-import {getMockUserPosts} from '../utils/mock-user-posts';
 import {isUserInfoResponse, UserInfoResponse} from '../interfaces/dto/user-info-response';
+import {parseISO} from 'date-fns';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
     addPost,
@@ -29,7 +29,20 @@ export class ProfileStore {
                 this.getUser();
             }
         });
+        when(() => !this.mainStore.authStore.isAuth, () => {
+            console.log('clear');
+            this.setPosts(null);
+            this.setUser(null);
+        });
     }
+
+    get sortedPosts () {
+        return this.posts?.slice().sort((post1, post2) => {
+            const date1 = parseISO(post1.createTimestamp).getTime();
+            const date2 = parseISO(post2.createTimestamp).getTime();
+            return date2 - date1;
+        });
+    };
 
     setIsLoading = (isLoading: boolean): void => {
         this.isLoading = isLoading;
@@ -59,7 +72,7 @@ export class ProfileStore {
         return this.posts ? this.posts.length : 0;
     }
 
-    getUser = async (): Promise<void> => {
+    getUser = async (userId?: number): Promise<void> => {
         this.setIsLoading(true);
         try {
             const userInfo = await AsyncStorage.getItem('@user');
@@ -83,7 +96,6 @@ export class ProfileStore {
         this.setIsLoading(true);
         try {
             const { data: posts } = await getAllUserPosts(userId);
-            console.log(posts)
             this.setPosts(posts);
         } catch (e) {
             console.log(e.message);

@@ -23,6 +23,14 @@ public class PostController {
     private final PostService postService;
 
     @ApiOperation(
+            value = "get all posts"
+    )
+    @GetMapping(path = "${url.getAllPosts}")
+    public List<PostDto> getAllPosts( @RequestHeader("Authorization") String token) {
+        return postService.getAllPosts(token);
+    }
+
+    @ApiOperation(
             value = "get all user posts"
     )
     @GetMapping(path = "${url.getAllUserPosts}")
@@ -30,13 +38,6 @@ public class PostController {
         return postService.getAllUserPosts(userId, token);
     }
 
-    @ApiOperation(
-            value = "get all posts"
-    )
-    @GetMapping(path = "${url.getAllPosts}")
-    public List<PostDto> getAllPosts( @RequestHeader("Authorization") String token) {
-        return postService.getAllPosts(token);
-    }
 
     @ApiOperation(
             value = "get post by user id"

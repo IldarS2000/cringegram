@@ -33,6 +33,9 @@ export const updateUserAvatar = (image: FileRequest): AxiosPromise<UserInfoRespo
     return axiosInstance.put('/user/avatar', formData);
 };
 
+export const getUserAvatar = (userId: number): AxiosPromise<Blob> =>
+    axiosInstance.get(`/user/avatar?userId=${userId}`, { responseType: 'blob' });
+
 export const addPost = (photo: FileRequest, description: string): AxiosPromise<Post> => {
     const formData = new FormData();
     formData.append('photo', photo as unknown as Blob);
@@ -42,3 +45,6 @@ export const addPost = (photo: FileRequest, description: string): AxiosPromise<P
 
 export const getAllUserPosts = (userId: number): AxiosPromise<Array<Post>> =>
     axiosInstance.get(`/posts/${userId}`);
+
+export const getAllPosts = (): AxiosPromise<Array<Post>> =>
+    axiosInstance.get('/posts/all');

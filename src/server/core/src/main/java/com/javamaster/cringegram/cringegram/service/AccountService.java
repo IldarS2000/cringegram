@@ -15,4 +15,7 @@ public interface AccountService {
     Void deleteUserAvatar(String token);
 
     UserInfoDto updateUserAboutMe(UpdateAboutMeDto updateAboutMeDto, String token);
+
+    byte[] getUserAvatar(Long userId);
+    
 }

@@ -1,8 +1,9 @@
-import React, {FC, useEffect} from 'react'
-import { StyleSheet, useWindowDimensions} from 'react-native';
+import React, {FC} from 'react'
+import { StyleSheet} from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {NavigationScreenProp} from "react-navigation";
 import {View, Text} from 'react-native';
+
 interface Props {
     navigation: NavigationScreenProp<any>
 }
