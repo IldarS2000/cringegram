@@ -8,7 +8,6 @@ import com.javamaster.cringegram.cringegram.repository.UserEntityRepository;
 import com.javamaster.cringegram.cringegram.service.AccountService;
 import com.javamaster.cringegram.cringegram.service.JwtService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -83,6 +83,21 @@ public class AccountServiceImpl implements AccountService {
         return user.getAvatar();
     }
 
+    @Override
+    public UserInfoDto changeSubscription(Long userId, String token) {
+        UserEntity subscriber = jwtService.claimTokenPayload(token);
+        UserEntity user = userEntityRepository.getById(userId);
+
+        Set<UserEntity> subscribers = user.getSubscribers();
+
+        if (subscribers.contains(subscriber)) {
+            subscribers.remove(subscriber);
+        } else {
+            subscribers.add(subscriber);
+        }
+        return buildingUser(userEntityRepository.save(user));
+    }
+
 
     private UserInfoDto buildingUser(UserEntity user) {
         return UserInfoDto.builder()
@@ -92,6 +107,8 @@ public class AccountServiceImpl implements AccountService {
                 .aboutMe(user.getAboutMe())
                 .postCount(user.getPostCount())
                 .subscriptionCount(user.getSubscriptionCount())
+                .subscribers(user.getSubscribers())
+                .subscriptions(user.getSubscriptions())
                 .build();
     }
 

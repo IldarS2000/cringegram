@@ -1,9 +1,12 @@
 package com.javamaster.cringegram.cringegram.dto;
 
+import com.javamaster.cringegram.cringegram.entity.user.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -17,4 +20,6 @@ public class UserInfoDto {
     private Integer postCount;
     private Integer subscriptionCount;
     private Integer subscribersCount;
+    private Set<UserEntity> subscriptions;
+    private Set<UserEntity> subscribers;
 }

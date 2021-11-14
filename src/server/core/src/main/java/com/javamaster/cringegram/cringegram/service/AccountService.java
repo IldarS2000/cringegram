@@ -17,5 +17,6 @@ public interface AccountService {
     UserInfoDto updateUserAboutMe(UpdateAboutMeDto updateAboutMeDto, String token);
 
     byte[] getUserAvatar(Long userId);
-    
+
+    UserInfoDto changeSubscription(Long user, String token);
 }

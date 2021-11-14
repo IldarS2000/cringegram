@@ -1,14 +1,16 @@
 package com.javamaster.cringegram.cringegram.entity.user;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.javamaster.cringegram.cringegram.entity.CommentEntity;
 import com.javamaster.cringegram.cringegram.entity.PostEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.apache.catalina.User;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Set;
 
 @Entity
@@ -17,7 +19,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserEntity {
+@EqualsAndHashCode(of = { "id" })
+public class UserEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -54,12 +57,18 @@ public class UserEntity {
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "subscription",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "subscriber_id")
+        joinColumns = @JoinColumn(name = "subscriber_id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private Set<UserEntity> users;
+    @JsonIgnore
+    private Set<UserEntity> subscriptions;
 
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "subscription",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "subscriber_id")
+    )
+    @JsonIgnore
     private Set<UserEntity> subscribers;
 
     @ManyToMany(cascade = CascadeType.ALL)
