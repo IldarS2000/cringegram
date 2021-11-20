@@ -1,68 +1,70 @@
 import React, {FC, useEffect, useState} from 'react'
-import {FlatList, Image, StyleSheet, TouchableWithoutFeedback} from 'react-native';
+import {Alert, FlatList, Image, StyleSheet, TouchableWithoutFeedback} from 'react-native';
 import {observer} from 'mobx-react-lite';
-import {NavigationScreenProp} from "react-navigation";
+import {NavigationRoute, NavigationScreenProp} from "react-navigation";
 import {View, Text} from 'react-native';
-import {useStores} from '../hooks/useStores';
 import {Fonts} from '../constants/fonts';
 import {toJS} from 'mobx';
-import SettingsIcon from './../../assets/svg/settings.svg';
 import {Color} from "../constants/colors";
 import {base64ImagePrefix} from "../constants/base64";
 import SubscribersIcon from './../../assets/svg/subscribers.svg';
 import SubscriptionsIcon from './../../assets/svg/subscriptions.svg';
 import PostsIcon from './../../assets/svg/posts.svg';
-import {SmallButton} from "../components/UI/SmallButton";
-import AddIcon from './../../assets/svg/add.svg';
 import EyeIcon from '../images/eye.svg';
-import {AddPostModal} from "../components/AddPostModal";
+import SubAddIcon from '../images/sub-add.svg';
+import SubRemoveIcon from '../images/sub-remove.svg';
+import SearchIcon from '../images/search.svg';
 import {PostPhoto} from "../components/PostPhoto";
 import {PhotoModal} from "../components/PhotoModal";
 import {Post} from "../interfaces/post";
-import SearchIcon from '../images/search.svg';
+import {UserInfoResponse} from "../interfaces/dto/user-info-response";
+import {getAllUserPosts, getUserInfo} from "../services/api.service";
+import {postDateComparator} from "../utils/post-date-comparator";
 
 
 interface Props {
     navigation: NavigationScreenProp<any>;
+    route: NavigationRoute<{userId: number}>;
 }
 
-export const Profile: FC<Props> = observer(({navigation}) => {
-    const {profileStore: {getUser, user, sortedPosts: posts, getUserPosts, postCount}} = useStores();
-    const [showAddPostModal, setShowAddPostModal] = useState(false);
+export const OtherProfile: FC<Props> = observer(({navigation, route: {params}}) => {
     const [showPhotoModal, setShowPhotoModal] = useState<Post | null>(null);
+    const [user, setUser] = useState<UserInfoResponse | null>(null);
+    const [posts, setPosts] = useState<Post[] | null>(null);
 
     useEffect(() => {
-        getUser();
-    }, []);
+        const getUser = async (userId: number) => {
+            try {
+                const [
+                    { data: userInfo },
+                    { data: posts },
+                ] = await Promise.all([getUserInfo(userId), getAllUserPosts(userId)]);
+                setUser(userInfo);
+                setPosts(posts.sort(postDateComparator));
+            } catch (e) {
+                console.log(e.message);
+            }
+        };
+        params?.userId && getUser(params.userId);
+    }, [params?.userId]);
 
-    useEffect(() => {
-        if (user) {
-            getUserPosts(user.id);
-        }
-    }, [user]);
-
-    const handleSettingsPress = () => {
-        navigation.navigate('SETTINGS') ;
-    };
-
-    const handleSearchPress = () => {
-        navigation.navigate('SEARCH') ;
-    };
 
     const handleFeedButtonPress = () => {
         navigation.navigate('FEED') ;
     };
 
-    const handleAddPress = () => {
-        setShowAddPostModal(true);
+    const handleSearchPress = () => {
+        navigation.navigate('SEARCH');
     };
-
-    const hideAddPostModal = () => setShowAddPostModal(false);
 
     const hidePhotoModal = () => setShowPhotoModal(null);
 
     const handlePhotoPress = (post: Post) => {
         setShowPhotoModal(post);
+    };
+
+    const handleSubPress = () => {
+        Alert.alert('плюс подписка');
     };
 
     return (
@@ -73,15 +75,23 @@ export const Profile: FC<Props> = observer(({navigation}) => {
                 <EyeIcon width={24} height={24} fill={Color.BLACK500} style={styles.feedButton}/>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback
-                onPress={handleSettingsPress}
-            >
-                <SettingsIcon width={24} height={24} fill={Color.BLACK500} style={styles.settings}/>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback
                 onPress={handleSearchPress}
             >
                 <SearchIcon width={24} height={24} fill={Color.BLACK500} style={styles.search}/>
             </TouchableWithoutFeedback>
+            {!(1 > 3) ? (
+                    <TouchableWithoutFeedback
+                        onPress={handleSubPress}
+                    >
+                        <SubAddIcon width={24} height={24} fill={Color.BLUE200} style={styles.subscribe}/>
+                    </TouchableWithoutFeedback>
+                ) : (
+                    <TouchableWithoutFeedback
+                        onPress={handleSubPress}
+                    >
+                        <SubRemoveIcon width={24} height={24} fill={Color.BLUE200} style={styles.subscribe}/>
+                    </TouchableWithoutFeedback>
+            )}
             {user && (
                 <>
                     <View style={styles.info}>
@@ -107,7 +117,7 @@ export const Profile: FC<Props> = observer(({navigation}) => {
                         </View>
                         <View style={styles.infoItem}>
                             <PostsIcon width={24} height={20} fill={Color.BLUE300}/>
-                            <Text style={styles.infoText}>{postCount || 0}</Text>
+                            <Text style={styles.infoText}>{posts?.length || 0}</Text>
                         </View>
                     </View>
                     <FlatList
@@ -124,13 +134,7 @@ export const Profile: FC<Props> = observer(({navigation}) => {
                     />
                 </>
             )}
-            <SmallButton
-                style={styles.addButton}
-                icon={<AddIcon width={24} height={24} fill={Color.BLUE300} />}
-                onPress={handleAddPress}
-            />
-            <AddPostModal visible={showAddPostModal} onRequestClose={hideAddPostModal} />
-            <PhotoModal visible={!!showPhotoModal} onRequestClose={hidePhotoModal} post={showPhotoModal!} />
+            <PhotoModal visible={!!showPhotoModal} onRequestClose={hidePhotoModal} post={showPhotoModal!} isOtherUser />
         </View>
     );
 });
@@ -147,12 +151,12 @@ const styles = StyleSheet.create({
         left: 15,
         position: 'absolute'
     },
-    settings: {
+    search: {
         alignSelf: 'flex-end',
         right: 15,
         position: 'absolute'
     },
-    search: {
+    subscribe: {
         alignSelf: 'flex-end',
         right: 15,
         top: 35,

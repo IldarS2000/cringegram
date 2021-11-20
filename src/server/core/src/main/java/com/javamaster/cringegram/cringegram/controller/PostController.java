@@ -38,13 +38,20 @@ public class PostController {
         return postService.getAllUserPosts(userId, token);
     }
 
-
     @ApiOperation(
             value = "get post by user id"
     )
     @GetMapping(path = "${url.getPostById}")
     public PostDto getPostById(@Valid @RequestParam Long postId, @RequestHeader("Authorization") String token) {
         return postService.getPostById(postId, token);
+    }
+
+    @ApiOperation(
+            value = "delete user post"
+    )
+    @DeleteMapping(path = "${url.deletePost}")
+    public ResponseEntity<Void> deletePost(@Valid @RequestParam("postId") Long postId, @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(postService.deletePost(postId, token));
     }
 
     @ApiOperation(
@@ -58,16 +65,8 @@ public class PostController {
     @ApiOperation(
             value = "update user post"
     )
-    @RequestMapping(path = "${url.updatePost}", method = PUT, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<PostDto> updatePost(@Valid @ModelAttribute UpdatePostDto updatePostDto, @RequestHeader("Authorization") String token) {
+    @PutMapping(path = "${url.updatePost}")
+    public ResponseEntity<PostDto> updatePost(@Valid @RequestBody UpdatePostDto updatePostDto, @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(postService.updatePost(updatePostDto, token));
-    }
-
-    @ApiOperation(
-            value = "delete user post"
-    )
-    @RequestMapping(path = "${url.deletePost}", method = DELETE, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<Void> deletePost(@Valid @RequestParam("postId") Long postId, @RequestHeader("Authorization") String token) {
-        return ResponseEntity.ok(postService.deletePost(postId, token));
     }
 }
