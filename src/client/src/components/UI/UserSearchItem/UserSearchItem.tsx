@@ -5,6 +5,7 @@ import {UserShortInfo} from "../../../interfaces/user-short-info";
 import {Color} from "../../../constants/colors";
 import {Fonts} from "../../../constants/fonts";
 import {UserAvatar} from "../UserAvatar/UserAvatar";
+import {base64ImagePrefix} from "../../../constants/base64";
 
 interface Props {
     user: UserShortInfo;
@@ -16,7 +17,7 @@ export const UserSearchItem: FC<Props> = ({user, onPress}) => {
         <TouchableWithoutFeedback onPress={() => onPress(user.id)}>
             <View style={styles.item}>
                 <View style={styles.avatarWrapper}>
-                    <UserAvatar avatar={user.avatar} />
+                    <UserAvatar avatar={`${base64ImagePrefix}${user.avatar}`} />
                 </View>
                 <View style={styles.info}>
                     <Text style={styles.username}>{user.username}</Text>

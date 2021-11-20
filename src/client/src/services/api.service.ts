@@ -73,27 +73,21 @@ export const toggleLike = (postId: number): AxiosPromise => {
     // axiosInstance.post('/posts/like', { postId });
 };
 
-export const toggleSubscribe = (userId: number): AxiosPromise => {
-    return new Promise((resolve) => {
-        console.log(`подписались на/отписались от userID:${userId}`);
-        resolve();
-    });
-    // return axiosInstance.post('/subscribe/', { userId });
+export const toggleSubscribe = (userId: number): AxiosPromise<UserInfoResponse> => {
+    return axiosInstance.post(`change-subscriber/${userId}`, { userId });
 };
 
 export const getLikes = (postId: number): Promise<UserShortInfo[]> =>
     new Promise((resolve) => resolve(mockUsers));
 
-export const getSubscribers = (userId: number): Promise<UserShortInfo[]> =>
-    new Promise((resolve) => resolve(mockUsers));
+export const getSubscribers = (userId: number): AxiosPromise<UserShortInfo[]> =>
+    axiosInstance.get(`/user/subscribers?userId=${userId}`);
 
-export const getSubscriptions = (userId: number): Promise<UserShortInfo[]> =>
-    new Promise((resolve) => resolve(mockUsers));
+export const getSubscriptions = (userId: number): AxiosPromise<UserShortInfo[]> =>
+    axiosInstance.get(`/user/subscriptions?userId=${userId}`);
 
-export const searchUsers = (searchTerm: string): Promise<UserShortInfo[]> =>
-    new Promise((resolve) => resolve(mockUsers.filter((user) => {
-        return searchTerm !== '' && user.username.includes(searchTerm)
-    })));
+export const searchUsers = (searchTerm: string): AxiosPromise<UserShortInfo[]> =>
+    axiosInstance.get(`/user/search?searchTerm=${searchTerm}`);
 
 export const getCommentsByPostId = (postId: number): AxiosPromise<Comment[]> =>
     axiosInstance.get(`/comments/${postId}`);

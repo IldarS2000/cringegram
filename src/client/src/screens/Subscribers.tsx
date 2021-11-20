@@ -8,9 +8,10 @@ import SubscribersIcon from './../../assets/svg/subscribers.svg';
 import SubscriptionsIcon from './../../assets/svg/subscriptions.svg';
 import {Fonts} from "../constants/fonts";
 import {UserShortInfo} from "../interfaces/user-short-info";
-import {SubscriberItem} from "../components/UI/SubscriberItem/SubscriberItem";
 import {Color} from "../constants/colors";
 import {getSubscribers, getSubscriptions} from "../services/api.service";
+import {SubscriberItem} from "../components/UI/SubscriberItem/SubscriberItem";
+import {useStores} from "../hooks/useStores";
 
 interface Props {
     navigation: NavigationScreenProp<any>;
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export const Subscribers: FC<Props> = observer(({navigation, route}) => {
+    const { profileStore: { user } } = useStores();
     const [users, setUsers] = useState<UserShortInfo[]>([]);
 
     const Icon = useMemo(() => {
@@ -39,9 +41,10 @@ export const Subscribers: FC<Props> = observer(({navigation, route}) => {
                 : getSubscriptions(userId);
         };
         if (route.params?.userId !== null && route.params?.userId !== undefined && route.params.subsType) {
-            getUsers(route.params.userId, route.params.subsType).then((users) => {
-                debugger
-                setUsers(users);
+            getUsers(route.params.userId, route.params.subsType).then((response) => {
+                setUsers(response.data.filter((userShortInfo: UserShortInfo) => (
+                    user!.id === route.params!.userId ? userShortInfo.id !== user!.id : true
+                )));
             });
         }
     }, [route.params?.userId, route.params?.subsType]);

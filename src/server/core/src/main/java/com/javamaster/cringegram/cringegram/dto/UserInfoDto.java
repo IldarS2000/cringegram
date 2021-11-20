@@ -20,4 +20,5 @@ public class UserInfoDto {
     private Integer postCount;
     private Integer subscriptionCount;
     private Integer subscribersCount;
+    private Boolean hasSubscription;
 }
