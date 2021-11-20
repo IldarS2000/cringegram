@@ -3,6 +3,7 @@ package com.javamaster.cringegram.cringegram.repository;
 import com.javamaster.cringegram.cringegram.entity.PostEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -14,4 +15,7 @@ public interface PostEntityRepository extends JpaRepository<PostEntity, Long> {
     List<PostEntity> getAll();
 
     List<PostEntity> getAllByUserId(Long userId);
+
+    @Query(value = "delete from post where id =:postId", nativeQuery = true)
+    Void myDeletePostById(@Param("postId") Long postId);
 }

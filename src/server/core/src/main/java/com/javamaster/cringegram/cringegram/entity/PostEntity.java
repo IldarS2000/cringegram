@@ -7,7 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -16,13 +18,13 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PostEntity {
+public class PostEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = UserEntity.class)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
@@ -38,9 +40,13 @@ public class PostEntity {
     @Column(name = "like_count")
     private Integer likeCount;
 
-    @OneToMany(mappedBy = "post")
-    private Set<CommentEntity> comments;
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    private Set<CommentEntity> comments = new HashSet<CommentEntity>(0);
 
-    @ManyToMany(mappedBy = "likedPosts",cascade = CascadeType.ALL)
-    private Set<UserEntity> users;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "like",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<UserEntity> usersLiked = new HashSet<UserEntity>(0);
 }

@@ -107,8 +107,7 @@ public class AccountServiceImpl implements AccountService {
                 .aboutMe(user.getAboutMe())
                 .postCount(user.getPostCount())
                 .subscriptionCount(user.getSubscriptionCount())
-                .subscribers(user.getSubscribers())
-                .subscriptions(user.getSubscriptions())
+                .subscribersCount(user.getSubscriberCount())
                 .build();
     }
 

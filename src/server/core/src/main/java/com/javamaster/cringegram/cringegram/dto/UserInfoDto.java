@@ -20,6 +20,4 @@ public class UserInfoDto {
     private Integer postCount;
     private Integer subscriptionCount;
     private Integer subscribersCount;
-    private Set<UserEntity> subscriptions;
-    private Set<UserEntity> subscribers;
 }

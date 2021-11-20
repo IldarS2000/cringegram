@@ -28,6 +28,14 @@ public class AccountController {
     }
 
     @ApiOperation(
+            value = "Delete user avatar"
+    )
+    @DeleteMapping(value = "${url.updateUserAvatar}")
+    public ResponseEntity<Void> deleteUserAvatar(@RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(accountService.deleteUserAvatar(token));
+    }
+
+    @ApiOperation(
             value = "Update username"
     )
     @PutMapping("${url.updateUsername}")
@@ -50,14 +58,6 @@ public class AccountController {
     @GetMapping("${url.getUserAvatar}")
     public byte[] getUserAvatar(@RequestParam("userId") Long userId) {
         return accountService.getUserAvatar(userId);
-    }
-
-    @ApiOperation(
-            value = "Delete user avatar"
-    )
-    @DeleteMapping(value = "${url.updateUserAvatar}")
-    public ResponseEntity<Void> deleteUserAvatar(@RequestHeader("Authorization") String token) {
-        return ResponseEntity.ok(accountService.deleteUserAvatar(token));
     }
 
     @ApiOperation(

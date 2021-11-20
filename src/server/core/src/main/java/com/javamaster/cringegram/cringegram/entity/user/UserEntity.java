@@ -11,6 +11,7 @@ import org.apache.catalina.User;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -61,7 +62,7 @@ public class UserEntity implements Serializable {
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     @JsonIgnore
-    private Set<UserEntity> subscriptions;
+    private Set<UserEntity> subscriptions = new HashSet<UserEntity>(0);
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "subscription",
@@ -69,7 +70,7 @@ public class UserEntity implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "subscriber_id")
     )
     @JsonIgnore
-    private Set<UserEntity> subscribers;
+    private Set<UserEntity> subscribers = new HashSet<UserEntity>(0);
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "like",

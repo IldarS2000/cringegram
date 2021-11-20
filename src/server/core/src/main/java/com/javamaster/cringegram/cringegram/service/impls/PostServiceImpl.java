@@ -86,7 +86,8 @@ public class PostServiceImpl implements PostService {
         if (!isValidToken) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file");
         }
-        postEntityRepository.deleteById(postId);
+        //postEntityRepository.deleteById(postId);
+        postEntityRepository.myDeletePostById(postId);
         return null;
     }
 

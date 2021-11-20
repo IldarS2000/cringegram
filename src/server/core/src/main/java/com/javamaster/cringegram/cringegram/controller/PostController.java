@@ -48,6 +48,14 @@ public class PostController {
     }
 
     @ApiOperation(
+            value = "delete user post"
+    )
+    @DeleteMapping(path = "${url.deletePost}")
+    public ResponseEntity<Void> deletePost(@Valid @RequestParam("postId") Long postId, @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(postService.deletePost(postId, token));
+    }
+
+    @ApiOperation(
             value = "create user post"
     )
     @RequestMapping(path = "${url.createPost}", method = POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -63,11 +71,5 @@ public class PostController {
         return ResponseEntity.ok(postService.updatePost(updatePostDto, token));
     }
 
-    @ApiOperation(
-            value = "delete user post"
-    )
-    @RequestMapping(path = "${url.deletePost}", method = DELETE, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<Void> deletePost(@Valid @RequestParam("postId") Long postId, @RequestHeader("Authorization") String token) {
-        return ResponseEntity.ok(postService.deletePost(postId, token));
-    }
+
 }
