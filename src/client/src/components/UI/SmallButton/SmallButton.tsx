@@ -1,6 +1,6 @@
 import React, {FC, ReactNode} from 'react'
 import {StyleSheet, ViewStyle, TouchableWithoutFeedback, View} from 'react-native';
-import { Color } from '../../constants/colors';
+import { Color } from '../../../constants/colors';
 
 interface Props {
     text?: string;

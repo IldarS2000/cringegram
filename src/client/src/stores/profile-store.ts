@@ -1,10 +1,10 @@
 import {MainStore} from '.';
 import {autorun, makeAutoObservable, runInAction, when} from 'mobx';
 import {Post} from '../interfaces/post';
-import {isUserInfoResponse, UserInfoResponse} from '../interfaces/dto/user-info-response';
+import {isUserInfoResponse, UserInfoResponse} from '../interfaces/user-info-response';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
-    addPost,
+    addPost, createComment,
     deletePost,
     getAllUserPosts,
     getUserInfo,
@@ -17,6 +17,7 @@ import {
 import {ImageInfo} from "expo-image-picker/build/ImagePicker.types";
 import {FileRequest} from "../interfaces/file-request";
 import {postDateComparator} from "../utils/post-date-comparator";
+import {Comment} from "../interfaces/comment";
 
 export class ProfileStore {
     isLoading: boolean = false;
@@ -195,12 +196,29 @@ export class ProfileStore {
     toggleLike = async (postId: number): Promise<void> => {
         this.setIsLoading(true);
         try {
-            const response = await toggleLike(postId);
+            await toggleLike(postId);
             const post = this.posts?.find((post: Post) => postId === post.id)!;
             runInAction(() => {
                 post.likeCount++;
                 post.hasYourLike = true;
             });
+        } catch (e) {
+            console.log(e.message);
+        } finally {
+            this.setIsLoading(false);
+        }
+    };
+
+    createComment = async (postId: number, comment: string): Promise<Comment | void> => {
+        this.setIsLoading(true);
+        try {
+            const { data: commentData } = await createComment({postId, comment, userId: this.user!.id});
+            this.posts?.forEach((post: Post) => {
+                if (post.id === postId) {
+                    post.commentsCount++;
+                }
+            });
+            return commentData;
         } catch (e) {
             console.log(e.message);
         } finally {

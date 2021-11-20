@@ -1,11 +1,11 @@
 import React, {FC} from 'react'
 import {StyleSheet, Text, TouchableWithoutFeedback, View} from 'react-native';
-import {Color} from "../constants/colors";
-import {Fonts} from "../constants/fonts";
-import SubscriptionsIcon from "../../assets/svg/subscriptions.svg";
-import SubscribersIcon from "../../assets/svg/subscribers.svg";
-import PostsIcon from "../../assets/svg/posts.svg";
-import {SubsType} from "../enums/subs.enum";
+import {Color} from "../../../constants/colors";
+import {Fonts} from "../../../constants/fonts";
+import SubscriptionsIcon from "../../../../assets/svg/subscriptions.svg";
+import SubscribersIcon from "../../../../assets/svg/subscribers.svg";
+import PostsIcon from "../../../../assets/svg/posts.svg";
+import {SubsType} from "../../../enums/subs.enum";
 import {NavigationScreenProp} from "react-navigation";
 
 interface Props {

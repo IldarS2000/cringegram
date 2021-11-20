@@ -71,5 +71,13 @@ export const Fonts = StyleSheet.create({
     digits: {
         fontSize: 18,
         lineHeight: 21,
-    }
+        fontFamily: Font.RobotoSlab_400Regular,
+        color: Color.BLACK500,
+    },
+    comment: {
+        fontSize: 14,
+        lineHeight: 17,
+        fontFamily: Font.RobotoSlab_400Regular,
+        color: Color.BLACK500,
+    },
 });

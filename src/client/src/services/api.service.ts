@@ -1,12 +1,15 @@
 import {axiosInstance} from "./interceptors";
 import {AxiosPromise} from "axios";
-import {UserExistsResponse} from "../interfaces/dto/user-exists-response";
-import {AuthResponse} from "../interfaces/dto/auth-response";
-import {UserInfoResponse} from "../interfaces/dto/user-info-response";
+import {UserExistsResponse} from "../interfaces/user-exists-response";
+import {AuthResponse} from "../interfaces/auth-response";
+import {UserInfoResponse} from "../interfaces/user-info-response";
 import {FileRequest} from "../interfaces/file-request";
 import {Post} from "../interfaces/post";
 import {mockUsers} from "../utils/mock-users";
-import {UserSearchResult} from "../interfaces/dto/user-search-result";
+import { Comment} from "../interfaces/comment";
+import {UserShortInfo} from "../interfaces/user-short-info";
+import {UserAvatarResponse} from "../interfaces/user-avatar-response";
+import {CreateCommentDto} from "../interfaces/create-comment-dto";
 
 export const checkUserExists = (email: string): AxiosPromise<UserExistsResponse> =>
     axiosInstance.post('/userexists', {email});
@@ -35,8 +38,11 @@ export const updateUserAvatar = (image: FileRequest): AxiosPromise<UserInfoRespo
     return axiosInstance.put('/user/avatar', formData);
 };
 
-export const getUserAvatar = (userId: number): AxiosPromise<Blob> =>
-    axiosInstance.get(`/user/avatar?userId=${userId}`, { responseType: 'blob' });
+export const getUserAvatar = (userId: number): AxiosPromise<UserAvatarResponse> =>
+    axiosInstance.get(`/user/avatar?userId=${userId}`);
+
+export const getUserShortInfo = (userId: number): AxiosPromise<UserShortInfo> =>
+    axiosInstance.get(`/user/short?userId=${userId}`);
 
 export const addPost = (photo: FileRequest, description: string): AxiosPromise<Post> => {
     const formData = new FormData();
@@ -75,16 +81,22 @@ export const toggleSubscribe = (userId: number): AxiosPromise => {
     // return axiosInstance.post('/subscribe/', { userId });
 };
 
-export const getLikes = (postId: number): Promise<UserSearchResult[]> =>
+export const getLikes = (postId: number): Promise<UserShortInfo[]> =>
     new Promise((resolve) => resolve(mockUsers));
 
-export const getSubscribers = (userId: number): Promise<UserSearchResult[]> =>
+export const getSubscribers = (userId: number): Promise<UserShortInfo[]> =>
     new Promise((resolve) => resolve(mockUsers));
 
-export const getSubscriptions = (userId: number): Promise<UserSearchResult[]> =>
+export const getSubscriptions = (userId: number): Promise<UserShortInfo[]> =>
     new Promise((resolve) => resolve(mockUsers));
 
-export const searchUsers = (searchTerm: string): Promise<UserSearchResult[]> =>
+export const searchUsers = (searchTerm: string): Promise<UserShortInfo[]> =>
     new Promise((resolve) => resolve(mockUsers.filter((user) => {
         return searchTerm !== '' && user.username.includes(searchTerm)
     })));
+
+export const getCommentsByPostId = (postId: number): AxiosPromise<Comment[]> =>
+    axiosInstance.get(`/comments/${postId}`);
+
+export const createComment = (createCommentDto: CreateCommentDto): AxiosPromise<Comment> =>
+    axiosInstance.post('/comments', createCommentDto);

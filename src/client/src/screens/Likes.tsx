@@ -4,8 +4,8 @@ import {observer} from 'mobx-react-lite';
 import {NavigationRoute, NavigationScreenProp} from "react-navigation";
 import DislikeIcon from '../images/dislike.svg';
 import {Fonts} from "../constants/fonts";
-import {UserSearchResult} from "../interfaces/dto/user-search-result";
-import {SubscriberItem} from "../components/SubscriberItem";
+import {UserShortInfo} from "../interfaces/user-short-info";
+import {SubscriberItem} from "../components/UI/SubscriberItem/SubscriberItem";
 import {Color} from "../constants/colors";
 import {getLikes} from "../services/api.service";
 
@@ -17,7 +17,7 @@ interface Props {
 
 
 export const Likes: FC<Props> = observer(({navigation, route}) => {
-    const [users, setUsers] = useState<UserSearchResult[]>([]);
+    const [users, setUsers] = useState<UserShortInfo[]>([]);
 
     useEffect(() => {
         route.params?.postId && getLikes(route.params.postId).then((users) => {
@@ -33,7 +33,7 @@ export const Likes: FC<Props> = observer(({navigation, route}) => {
         <View style={styles.screen}>
             <Text style={styles.title}>Оценки</Text>
             <DislikeIcon style={styles.icon} width={70} height={70} fill={Color.BLUE300} />
-            <FlatList<UserSearchResult>
+            <FlatList<UserShortInfo>
                 style={styles.users}
                 data={users}
                 keyExtractor={({ id }) => `${id}`}

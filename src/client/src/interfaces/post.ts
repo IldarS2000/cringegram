@@ -6,4 +6,5 @@ export interface Post {
     likeCount: number;
     createTimestamp: string;
     hasYourLike: boolean;
+    commentsCount: number;
 }

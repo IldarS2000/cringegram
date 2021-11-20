@@ -1,12 +1,13 @@
 import React, {FC} from 'react'
 import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
-import {View, Text, Image} from 'react-native';
-import {UserSearchResult} from "../interfaces/dto/user-search-result";
-import {Color} from "../constants/colors";
-import {Fonts} from "../constants/fonts";
+import {View, Text} from 'react-native';
+import {UserShortInfo} from "../../../interfaces/user-short-info";
+import {Color} from "../../../constants/colors";
+import {Fonts} from "../../../constants/fonts";
+import {UserAvatar} from "../UserAvatar/UserAvatar";
 
 interface Props {
-    user: UserSearchResult;
+    user: UserShortInfo;
     onPress: (userId: number) => void;
 }
 
@@ -15,13 +16,7 @@ export const UserSearchItem: FC<Props> = ({user, onPress}) => {
         <TouchableWithoutFeedback onPress={() => onPress(user.id)}>
             <View style={styles.item}>
                 <View style={styles.avatarWrapper}>
-                    <Image
-                        source={user.avatar
-                            ? {uri: user.avatar}
-                            : require('../../assets/icon.png')
-                        }
-                        style={styles.avatar}
-                    />
+                    <UserAvatar avatar={user.avatar} />
                 </View>
                 <View style={styles.info}>
                     <Text style={styles.username}>{user.username}</Text>
@@ -61,11 +56,6 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: -2,
         overflow: 'hidden',
-    },
-    avatar: {
-        height: '100%',
-        width: '100%',
-        borderRadius: 100,
     },
     info: {
         height: '100%',

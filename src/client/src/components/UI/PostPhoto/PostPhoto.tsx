@@ -2,7 +2,7 @@ import React, {FC} from 'react'
 import {Image, StyleSheet, TouchableWithoutFeedback, useWindowDimensions} from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {View} from 'react-native';
-import {Post} from "../interfaces/post";
+import {Post} from "../../../interfaces/post";
 
 interface Props {
     post: Post;

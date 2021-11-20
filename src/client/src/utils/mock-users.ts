@@ -1,6 +1,6 @@
-import {UserSearchResult} from "../interfaces/dto/user-search-result";
+import {UserShortInfo} from "../interfaces/user-short-info";
 
-export const mockUsers: UserSearchResult[] = [
+export const mockUsers: UserShortInfo[] = [
     {
         id: 1,
         username: 'kek',

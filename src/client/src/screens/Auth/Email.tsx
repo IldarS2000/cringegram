@@ -1,7 +1,7 @@
 import React, {FC} from 'react'
 import {StyleSheet} from 'react-native';
-import {Input} from '../../components/UI/Input';
-import {Button} from '../../components/UI/Button';
+import {Input} from '../../components/UI/Input/Input';
+import {Button} from '../../components/UI/Button/Button';
 import {AuthLayout} from './AuthLayout';
 import {useStores} from "../../hooks/useStores";
 import {observer} from 'mobx-react-lite';

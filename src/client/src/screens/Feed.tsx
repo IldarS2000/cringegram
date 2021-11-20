@@ -15,7 +15,7 @@ import {toJS} from "mobx";
 import {Color} from "../constants/colors";
 import {base64ImagePrefix} from "../constants/base64";
 import {Post} from "../interfaces/post";
-import {FeedPostModal} from "../components/FeedPostModal";
+import {FeedPostModal} from "../components/modals/FeedPostModal/FeedPostModal";
 
 interface Props {
     navigation: NavigationScreenProp<any>

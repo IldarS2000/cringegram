@@ -1,12 +1,13 @@
 import React, {FC} from 'react'
 import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
-import {View, Text, Image} from 'react-native';
-import {UserSearchResult} from "../interfaces/dto/user-search-result";
-import {Color} from "../constants/colors";
-import {Fonts} from "../constants/fonts";
+import {View, Text} from 'react-native';
+import {UserShortInfo} from "../../../interfaces/user-short-info";
+import {Color} from "../../../constants/colors";
+import {Fonts} from "../../../constants/fonts";
+import {UserAvatar} from "../UserAvatar/UserAvatar";
 
 interface Props {
-    user: UserSearchResult;
+    user: UserShortInfo;
     color: string;
     onPress: (userId: number) => void;
 }
@@ -19,13 +20,7 @@ export const SubscriberItem: FC<Props> = ({user, onPress, color}) => {
                 backgroundColor: color,
             }}>
                 <View style={styles.avatarWrapper}>
-                    <Image
-                        source={user.avatar
-                            ? {uri: user.avatar}
-                            : require('../../assets/icon.png')
-                        }
-                        style={styles.avatar}
-                    />
+                    <UserAvatar avatar={user.avatar} />
                 </View>
                 <Text style={styles.username}>{user.username}</Text>
             </View>

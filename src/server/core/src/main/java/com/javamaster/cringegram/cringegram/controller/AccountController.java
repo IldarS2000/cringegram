@@ -56,8 +56,16 @@ public class AccountController {
             value = "Get user avatar"
     )
     @GetMapping("${url.getUserAvatar}")
-    public byte[] getUserAvatar(@RequestParam("userId") Long userId) {
+    public UserAvatarDto getUserAvatar(@RequestParam("userId") Long userId) {
         return accountService.getUserAvatar(userId);
+    }
+
+    @ApiOperation(
+            value = "Get user avatar"
+    )
+    @GetMapping("${url.getUserShortInfo}")
+    public UserShortInfoDto getUserShortInfo(@RequestParam("userId") Long userId) {
+        return accountService.getUserShortInfo(userId);
     }
 
     @ApiOperation(
