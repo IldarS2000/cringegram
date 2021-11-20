@@ -14,23 +14,23 @@ import AddIcon from './../../assets/svg/add.svg';
 import EyeIcon from '../images/eye.svg';
 import {AddPostModal} from "../components/modals/AddPostModal/AddPostModal";
 import {PostPhoto} from "../components/UI/PostPhoto/PostPhoto";
-import {PhotoModal} from "../components/modals/PhotoModal/PhotoModal";
 import {Post} from "../interfaces/post";
 import SearchIcon from '../images/search.svg';
 import {ProfileContentInfo} from "../components/UI/ProfileContentInfo/ProfileContentInfo";
+import {PhotoModal} from "../components/modals/PhotoModal/PhotoModal";
 
 interface Props {
     navigation: NavigationScreenProp<any>;
 }
 
 export const Profile: FC<Props> = observer(({navigation}) => {
-    const {profileStore: {getUser, user, sortedPosts: posts, getUserPosts, toggleLike}} = useStores();
+    const {profileStore: {getUser, user, sortedPosts: posts, getUserPosts, toggleLike, createComment}, authStore: { isAuth }} = useStores();
     const [showAddPostModal, setShowAddPostModal] = useState(false);
     const [showPhotoModal, setShowPhotoModal] = useState<Post | null>(null);
 
     useEffect(() => {
-        getUser();
-    }, []);
+        isAuth && getUser();
+    }, [isAuth]);
 
     useEffect(() => {
         if (user) {
@@ -64,6 +64,10 @@ export const Profile: FC<Props> = observer(({navigation}) => {
 
     const handleLikePress = (postId: number) => {
         toggleLike(postId);
+    };
+
+    const handleCommentAdd = (postId: number, comment: string) => {
+        return createComment(postId, comment);
     };
 
     return (
@@ -131,6 +135,8 @@ export const Profile: FC<Props> = observer(({navigation}) => {
                     post={showPhotoModal!}
                     onLikePress={handleLikePress}
                     navigation={navigation}
+                    // @ts-ignore
+                    onCommentAdd={handleCommentAdd}
                 />
             )}
         </View>

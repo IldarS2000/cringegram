@@ -12,12 +12,12 @@ import SubAddIcon from '../images/sub-add.svg';
 import SubRemoveIcon from '../images/sub-remove.svg';
 import SearchIcon from '../images/search.svg';
 import {PostPhoto} from "../components/UI/PostPhoto/PostPhoto";
-import {PhotoModal} from "../components/modals/PhotoModal/PhotoModal";
 import {Post} from "../interfaces/post";
 import {UserInfoResponse} from "../interfaces/user-info-response";
-import {getAllUserPosts, getUserInfo, toggleLike, toggleSubscribe} from "../services/api.service";
+import {createComment, getAllUserPosts, getUserInfo, toggleLike, toggleSubscribe} from "../services/api.service";
 import {postDateComparator} from "../utils/post-date-comparator";
 import {ProfileContentInfo} from "../components/UI/ProfileContentInfo/ProfileContentInfo";
+import {PhotoModal} from "../components/modals/PhotoModal/PhotoModal";
 
 interface Props {
     navigation: NavigationScreenProp<any>;
@@ -81,6 +81,25 @@ export const OtherProfile: FC<Props> = observer(({navigation, route: {params}}) 
         const post = posts?.find((post) => post.id === postId)!;
         setShowPhotoModal(post);
         setPosts(newPosts);
+    };
+
+    const handleAddComment = async (postId: number, comment: string) => {
+        const commentData =  await createComment({
+            postId,
+            comment,
+            userId: user!.id,
+        });
+        const newPosts = posts!.map((post) => {
+            if (post.id === postId) {
+                return {
+                    ...post,
+                    commentsCount: post.commentsCount + 1,
+                };
+            }
+            return post;
+        });
+        setPosts(newPosts);
+        return commentData.data;
     };
 
     return (
@@ -150,6 +169,7 @@ export const OtherProfile: FC<Props> = observer(({navigation, route: {params}}) 
                     post={showPhotoModal!}
                     isOtherUser
                     onLikePress={handleLikePress}
+                    onCommentAdd={handleAddComment}
                     navigation={navigation}
                 />
             )}

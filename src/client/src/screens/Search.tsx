@@ -5,7 +5,7 @@ import {NavigationScreenProp} from "react-navigation";
 import {View} from 'react-native';
 import {Input} from "../components/UI/Input/Input";
 import {debounce} from "lodash";
-import {UserSearchResult} from "../interfaces/user-search-result";
+import {UserShortInfo} from "../interfaces/user-short-info";
 import {UserSearchItem} from "../components/UI/UserSearchItem/UserSearchItem";
 import {searchUsers} from "../services/api.service";
 
@@ -15,7 +15,7 @@ interface Props {
 
 export const Search: FC<Props> = observer(({navigation}) => {
     const [searchTerm, setSearchTerm] = useState<string>('');
-    const [users, setUsers] = useState<UserSearchResult[]>([]);
+    const [users, setUsers] = useState<UserShortInfo[]>([]);
 
     const getDebouncedSearchResult = useCallback(debounce(async (term: string) => {
         const users = await searchUsers(term);
@@ -39,7 +39,7 @@ export const Search: FC<Props> = observer(({navigation}) => {
                 placeholder='Введите никнейм'
                 style={styles.input}
             />
-            <FlatList<UserSearchResult>
+            <FlatList<UserShortInfo>
                 style={styles.users}
                 data={users}
                 keyExtractor={({ id }) => `${id}`}

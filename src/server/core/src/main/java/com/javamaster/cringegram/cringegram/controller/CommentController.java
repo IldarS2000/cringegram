@@ -15,11 +15,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class CommentController {
-//    url.getPostComments = /comments/{postId}
-//    url.createComment = /comments
-//    url.updateComment = /comments
-//    url.deleteComment = /comments
-
     private final CommentService commentService;
 
     @ApiOperation(

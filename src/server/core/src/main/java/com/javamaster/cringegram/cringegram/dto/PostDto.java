@@ -19,4 +19,5 @@ public class PostDto {
     private byte[] photo;
     private String description;
     private Integer likeCount;
+    private Integer commentsCount;
 }

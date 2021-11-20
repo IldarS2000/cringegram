@@ -88,6 +88,7 @@ public class PostServiceImpl implements PostService {
 
 
     private PostDto buildPostDto(PostEntity post) {
+        Integer commentsCount = postEntityRepository.getCommentsCount(post.getId());
         return PostDto.builder()
                 .id(post.getId())
                 .createTimestamp(post.getCreateTimestamp())
@@ -95,6 +96,7 @@ public class PostServiceImpl implements PostService {
                 .photo(post.getPhoto())
                 .description(post.getDescription())
                 .likeCount(post.getLikeCount())
+                .commentsCount(commentsCount)
                 .build();
     }
 

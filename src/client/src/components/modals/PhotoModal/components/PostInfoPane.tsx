@@ -17,6 +17,7 @@ interface Props {
     onDotsPress: () => void;
     isOtherUser: boolean;
     likeCount: number;
+    commentsCount: number;
 }
 
 export const PostInfoPane: FC<Props> = ({
@@ -27,7 +28,8 @@ export const PostInfoPane: FC<Props> = ({
     onDislikePress,
     onDotsPress,
     postDateISO,
-    likeCount
+    likeCount,
+    commentsCount,
 }: Props): JSX.Element => {
     const {height} = useWindowDimensions();
     return (
@@ -50,7 +52,7 @@ export const PostInfoPane: FC<Props> = ({
                 <TouchableWithoutFeedback onPress={onCommentPress}>
                     <View style={styles.button}>
                         <CommentIcon fill={Color.BLUE200} width={24} height={24} />
-                        <Text style={styles.buttonText}>{0}</Text>
+                        <Text style={styles.buttonText}>{commentsCount}</Text>
                     </View>
                 </TouchableWithoutFeedback>
                 {!isOtherUser &&

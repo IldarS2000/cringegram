@@ -1,8 +1,6 @@
 package com.javamaster.cringegram.cringegram.service;
 
-import com.javamaster.cringegram.cringegram.dto.UpdateAboutMeDto;
-import com.javamaster.cringegram.cringegram.dto.UpdateUsernameDto;
-import com.javamaster.cringegram.cringegram.dto.UserInfoDto;
+import com.javamaster.cringegram.cringegram.dto.*;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface AccountService {
@@ -16,7 +14,9 @@ public interface AccountService {
 
     UserInfoDto updateUserAboutMe(UpdateAboutMeDto updateAboutMeDto, String token);
 
-    byte[] getUserAvatar(Long userId);
+    UserAvatarDto getUserAvatar(Long userId);
 
     UserInfoDto changeSubscription(Long user, String token);
+
+    UserShortInfoDto getUserShortInfo(Long userId);
 }

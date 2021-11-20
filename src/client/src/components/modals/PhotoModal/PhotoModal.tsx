@@ -14,6 +14,7 @@ import {EditModePane} from "./components/EditModePane";
 import {ExtraMenuPane} from "./components/ExtraMenuPane";
 import {PostInfoPane} from "./components/PostInfoPane";
 import {CommentsPane} from "./components/CommentsPane";
+import {Comment} from "../../../interfaces/comment";
 
 interface Props {
     visible: boolean;
@@ -22,6 +23,7 @@ interface Props {
     isOtherUser?: boolean;
     navigation: NavigationScreenProp<any>;
     onLikePress: (postId: number) => void;
+    onCommentAdd: (postId: number, comment: string) => Promise<Comment>;
 }
 
 enum PhotoModalPane {
@@ -37,7 +39,8 @@ export const PhotoModal: FC<Props> = observer(({
     post,
     isOtherUser = false,
     navigation,
-    onLikePress
+    onLikePress,
+    onCommentAdd,
 }: Props): JSX.Element => {
     const { profileStore: { deletePost, updatePost } } = useStores();
 
@@ -102,6 +105,7 @@ export const PhotoModal: FC<Props> = observer(({
                         onDotsPress={handleDotsPress}
                         postDateISO={post?.createTimestamp}
                         likeCount={post?.likeCount || 0}
+                        commentsCount={post?.commentsCount || 0}
                     />
                 )}
                 {currentPane === PhotoModalPane.EXTRA_MENU && (
@@ -120,9 +124,11 @@ export const PhotoModal: FC<Props> = observer(({
                     />
                 )}
                 {currentPane === PhotoModalPane.COMMENTS && (
-                    <CommentsPane>
-                        <View />
-                    </CommentsPane>
+                    <CommentsPane
+                        postId={post!.id}
+                        navigation={navigation}
+                        onCommentAdd={onCommentAdd}
+                    />
                 )}
             </View>
         </Modal>

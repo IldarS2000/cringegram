@@ -1,8 +1,6 @@
 package com.javamaster.cringegram.cringegram.service.impls;
 
-import com.javamaster.cringegram.cringegram.dto.UpdateAboutMeDto;
-import com.javamaster.cringegram.cringegram.dto.UpdateUsernameDto;
-import com.javamaster.cringegram.cringegram.dto.UserInfoDto;
+import com.javamaster.cringegram.cringegram.dto.*;
 import com.javamaster.cringegram.cringegram.entity.user.UserEntity;
 import com.javamaster.cringegram.cringegram.repository.UserEntityRepository;
 import com.javamaster.cringegram.cringegram.service.AccountService;
@@ -78,9 +76,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public byte[] getUserAvatar(Long userId) {
+    public UserAvatarDto getUserAvatar(Long userId) {
         UserEntity user = userEntityRepository.getById(userId);
-        return user.getAvatar();
+        return UserAvatarDto.builder()
+                .base64(user.getAvatar())
+                .build();
     }
 
     @Override
@@ -96,6 +96,27 @@ public class AccountServiceImpl implements AccountService {
             subscribers.add(subscriber);
         }
         return buildingUser(userEntityRepository.save(user));
+    }
+
+    @Override
+    public UserShortInfoDto getUserShortInfo(Long userId) {
+        if (!userEntityRepository.existsUserEntitiesById(userId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
+        }
+
+        Optional<UserEntity> userEntityOptional = userEntityRepository.findById(userId);
+
+        if (userEntityOptional.isPresent()) {
+            UserEntity user = userEntityOptional.get();
+            return UserShortInfoDto.builder()
+                    .username(user.getUsername())
+                    .id(user.getId())
+                    .avatar(user.getAvatar())
+                    .aboutMe(user.getAboutMe())
+                    .build();
+        }
+
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with this id not found");
     }
 
 

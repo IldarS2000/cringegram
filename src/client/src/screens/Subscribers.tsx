@@ -7,7 +7,7 @@ import {formatSubsType} from "../utils/format-subs-type";
 import SubscribersIcon from './../../assets/svg/subscribers.svg';
 import SubscriptionsIcon from './../../assets/svg/subscriptions.svg';
 import {Fonts} from "../constants/fonts";
-import {UserSearchResult} from "../interfaces/user-search-result";
+import {UserShortInfo} from "../interfaces/user-short-info";
 import {SubscriberItem} from "../components/UI/SubscriberItem/SubscriberItem";
 import {Color} from "../constants/colors";
 import {getSubscribers, getSubscriptions} from "../services/api.service";
@@ -18,7 +18,7 @@ interface Props {
 }
 
 export const Subscribers: FC<Props> = observer(({navigation, route}) => {
-    const [users, setUsers] = useState<UserSearchResult[]>([]);
+    const [users, setUsers] = useState<UserShortInfo[]>([]);
 
     const Icon = useMemo(() => {
         return route.params?.subsType === SubsType.SUBSCRIBERS
@@ -54,7 +54,7 @@ export const Subscribers: FC<Props> = observer(({navigation, route}) => {
         <View style={styles.screen}>
             <Text style={styles.title}>{formatSubsType(route.params!.subsType)}</Text>
             <Icon style={styles.icon} width={70} height={70} fill={color} />
-            <FlatList<UserSearchResult>
+            <FlatList<UserShortInfo>
                 style={styles.users}
                 data={users}
                 keyExtractor={({ id }) => `${id}`}

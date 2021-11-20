@@ -14,20 +14,18 @@ export const EditModePane: FC<Props> = ({ description, onChangeDescription, onEd
     const {height} = useWindowDimensions();
     return (
         <>
-            <TouchableWithoutFeedback>
-                <View style={{
-                    ...styles.textWrapper,
-                    maxHeight: height - 360
-                }}>
-                    <TextInput
-                        multiline
-                        style={styles.text}
-                        maxLength={128}
-                        onChangeText={onChangeDescription}
-                        value={description}
-                    />
-                </View>
-            </TouchableWithoutFeedback>
+            <View style={{
+                ...styles.textWrapper,
+                maxHeight: height - 360
+            }}>
+                <TextInput
+                    multiline
+                    style={styles.text}
+                    maxLength={128}
+                    onChangeText={onChangeDescription}
+                    value={description}
+                />
+            </View>
             <TouchableWithoutFeedback onPress={onEditConfirm}>
                 <View style={styles.buttonEdit}>
                     <EditIcon fill={Color.BLUE200} height={43} width={43} />

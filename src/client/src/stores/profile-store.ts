@@ -4,7 +4,7 @@ import {Post} from '../interfaces/post';
 import {isUserInfoResponse, UserInfoResponse} from '../interfaces/user-info-response';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
-    addPost,
+    addPost, createComment,
     deletePost,
     getAllUserPosts,
     getUserInfo,
@@ -17,6 +17,7 @@ import {
 import {ImageInfo} from "expo-image-picker/build/ImagePicker.types";
 import {FileRequest} from "../interfaces/file-request";
 import {postDateComparator} from "../utils/post-date-comparator";
+import {Comment} from "../interfaces/comment";
 
 export class ProfileStore {
     isLoading: boolean = false;
@@ -201,6 +202,23 @@ export class ProfileStore {
                 post.likeCount++;
                 post.hasYourLike = true;
             });
+        } catch (e) {
+            console.log(e.message);
+        } finally {
+            this.setIsLoading(false);
+        }
+    };
+
+    createComment = async (postId: number, comment: string): Promise<Comment | void> => {
+        this.setIsLoading(true);
+        try {
+            const { data: commentData } = await createComment({postId, comment, userId: this.user!.id});
+            this.posts?.forEach((post: Post) => {
+                if (post.id === postId) {
+                    post.commentsCount++;
+                }
+            });
+            return commentData;
         } catch (e) {
             console.log(e.message);
         } finally {
