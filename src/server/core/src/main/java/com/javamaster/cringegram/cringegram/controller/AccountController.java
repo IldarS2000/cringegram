@@ -1,16 +1,15 @@
 package com.javamaster.cringegram.cringegram.controller;
 
-import com.javamaster.cringegram.cringegram.dto.UpdateAboutMeDto;
-import com.javamaster.cringegram.cringegram.dto.UpdateUsernameDto;
-import com.javamaster.cringegram.cringegram.dto.UserInfoDto;
+import com.javamaster.cringegram.cringegram.dto.*;
+import com.javamaster.cringegram.cringegram.entity.user.UserEntity;
 import com.javamaster.cringegram.cringegram.service.AccountService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.HttpEntityMethodProcessor;
 
 import javax.validation.Valid;
 
@@ -26,6 +25,14 @@ public class AccountController {
     @GetMapping("${url.getUserInfo}")
     public UserInfoDto getUserInfo(@RequestParam("userId") Long userId) {
         return accountService.getUserInfo(userId);
+    }
+
+    @ApiOperation(
+            value = "Delete user avatar"
+    )
+    @DeleteMapping(value = "${url.updateUserAvatar}")
+    public ResponseEntity<Void> deleteUserAvatar(@RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(accountService.deleteUserAvatar(token));
     }
 
     @ApiOperation(
@@ -54,19 +61,23 @@ public class AccountController {
     }
 
     @ApiOperation(
-            value = "Delete user avatar"
-    )
-    @DeleteMapping(value = "${url.updateUserAvatar}")
-    public ResponseEntity<Void> deleteUserAvatar(@RequestHeader("Authorization") String token) {
-        return ResponseEntity.ok(accountService.deleteUserAvatar(token));
-    }
-
-    @ApiOperation(
             value = "Update user about me"
     )
     @PutMapping("${url.updateUserAboutMe}")
     public ResponseEntity<UserInfoDto> updateUserAboutMe(@RequestBody @Valid UpdateAboutMeDto updateAboutMeDto, @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(accountService.updateUserAboutMe(updateAboutMeDto, token));
     }
+
+    @ApiOperation(
+            value = "change user's subscription"
+    )
+    @PostMapping("change-subscriber/{userId}")
+    public ResponseEntity<UserInfoDto> changeSubscription(
+            @PathVariable("userId") Long userId,
+            @RequestHeader("Authorization") String token
+    ) {
+        return ResponseEntity.ok(accountService.changeSubscription(userId, token));
+    }
+
 
 }

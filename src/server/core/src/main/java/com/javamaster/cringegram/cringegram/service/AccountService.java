@@ -18,4 +18,5 @@ public interface AccountService {
 
     byte[] getUserAvatar(Long userId);
 
+    UserInfoDto changeSubscription(Long user, String token);
 }

@@ -77,8 +77,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Void deletePost(Long postId, String token) {
-        jwtService.isValidToken(token);
-        postEntityRepository.deleteById(postId);
+        boolean isValidToken = jwtService.isValidToken(token);
+        if (!isValidToken) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file");
+        }
+        //postEntityRepository.deleteById(postId);
+        postEntityRepository.myDeletePostById(postId);
         return null;
     }
 
