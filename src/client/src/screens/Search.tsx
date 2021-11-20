@@ -3,10 +3,10 @@ import {FlatList, StyleSheet} from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {NavigationScreenProp} from "react-navigation";
 import {View} from 'react-native';
-import {Input} from "../components/UI/Input";
+import {Input} from "../components/UI/Input/Input";
 import {debounce} from "lodash";
-import {UserSearchResult} from "../interfaces/dto/user-search-result";
-import {UserSearchItem} from "../components/UserSearchItem";
+import {UserSearchResult} from "../interfaces/user-search-result";
+import {UserSearchItem} from "../components/UI/UserSearchItem/UserSearchItem";
 import {searchUsers} from "../services/api.service";
 
 interface Props {

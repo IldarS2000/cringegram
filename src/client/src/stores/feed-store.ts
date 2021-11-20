@@ -1,19 +1,10 @@
 import {MainStore} from '.';
-import {autorun, makeAutoObservable} from 'mobx';
+import {makeAutoObservable} from 'mobx';
 import {Post} from '../interfaces/post';
-import {isUserInfoResponse, UserInfoResponse} from '../interfaces/dto/user-info-response';
 import {parseISO} from 'date-fns';
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
-    addPost, getAllPosts,
-    getAllUserPosts,
-    getUserInfo,
-    updateUserAboutMe,
-    updateUserAvatar,
-    updateUsername
+    getAllPosts,
 } from "../services/api.service";
-import {ImageInfo} from "expo-image-picker/build/ImagePicker.types";
-import {FileRequest} from "../interfaces/file-request";
 
 export class FeedStore {
     isLoading: boolean = false;

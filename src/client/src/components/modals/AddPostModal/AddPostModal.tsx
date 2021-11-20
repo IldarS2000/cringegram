@@ -7,14 +7,14 @@ import {
     TouchableWithoutFeedback, useWindowDimensions,
 } from 'react-native';
 import {observer} from 'mobx-react-lite';
-import {View, Text} from 'react-native';
-import {Color} from "../constants/colors";
-import { useGalleryAccess } from '../hooks/useGalleryAccess';
+import {View} from 'react-native';
+import {Color} from "../../../constants/colors";
+import { useGalleryAccess } from '../../../hooks/useGalleryAccess';
 import * as ImagePicker from "expo-image-picker";
 import {ImageInfo} from "expo-image-picker/build/ImagePicker.types";
-import EditIcon from '../images/edit.svg';
-import {Fonts} from "../constants/fonts";
-import {useStores} from "../hooks/useStores";
+import EditIcon from '../../../images/edit.svg';
+import {Fonts} from "../../../constants/fonts";
+import {useStores} from "../../../hooks/useStores";
 
 interface Props {
     visible: boolean;

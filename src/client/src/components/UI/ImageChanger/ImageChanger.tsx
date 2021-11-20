@@ -1,8 +1,8 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import {ImageSourcePropType, StyleSheet, TouchableWithoutFeedback, View, ViewStyle, Image} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { ImageInfo } from 'expo-image-picker/build/ImagePicker.types';
-import {useGalleryAccess} from "../../hooks/useGalleryAccess";
+import {useGalleryAccess} from "../../../hooks/useGalleryAccess";
 
 interface Props {
     onChange: (image: ImageInfo) => void;

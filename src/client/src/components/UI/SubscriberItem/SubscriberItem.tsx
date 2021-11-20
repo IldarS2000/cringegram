@@ -1,9 +1,9 @@
 import React, {FC} from 'react'
 import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
 import {View, Text, Image} from 'react-native';
-import {UserSearchResult} from "../interfaces/dto/user-search-result";
-import {Color} from "../constants/colors";
-import {Fonts} from "../constants/fonts";
+import {UserSearchResult} from "../../../interfaces/user-search-result";
+import {Color} from "../../../constants/colors";
+import {Fonts} from "../../../constants/fonts";
 
 interface Props {
     user: UserSearchResult;
@@ -22,7 +22,7 @@ export const SubscriberItem: FC<Props> = ({user, onPress, color}) => {
                     <Image
                         source={user.avatar
                             ? {uri: user.avatar}
-                            : require('../../assets/icon.png')
+                            : require('../../../../assets/icon.png')
                         }
                         style={styles.avatar}
                     />

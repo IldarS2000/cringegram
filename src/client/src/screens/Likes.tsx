@@ -4,8 +4,8 @@ import {observer} from 'mobx-react-lite';
 import {NavigationRoute, NavigationScreenProp} from "react-navigation";
 import DislikeIcon from '../images/dislike.svg';
 import {Fonts} from "../constants/fonts";
-import {UserSearchResult} from "../interfaces/dto/user-search-result";
-import {SubscriberItem} from "../components/SubscriberItem";
+import {UserSearchResult} from "../interfaces/user-search-result";
+import {SubscriberItem} from "../components/UI/SubscriberItem/SubscriberItem";
 import {Color} from "../constants/colors";
 import {getLikes} from "../services/api.service";
 

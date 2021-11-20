@@ -1,7 +1,7 @@
 import {MainStore} from '.';
 import {autorun, makeAutoObservable, runInAction, when} from 'mobx';
 import {Post} from '../interfaces/post';
-import {isUserInfoResponse, UserInfoResponse} from '../interfaces/dto/user-info-response';
+import {isUserInfoResponse, UserInfoResponse} from '../interfaces/user-info-response';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
     addPost,
@@ -195,7 +195,7 @@ export class ProfileStore {
     toggleLike = async (postId: number): Promise<void> => {
         this.setIsLoading(true);
         try {
-            const response = await toggleLike(postId);
+            await toggleLike(postId);
             const post = this.posts?.find((post: Post) => postId === post.id)!;
             runInAction(() => {
                 post.likeCount++;

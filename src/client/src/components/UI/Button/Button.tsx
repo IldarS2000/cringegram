@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useRef } from 'react'
 import { StyleSheet, Text, ViewStyle, Animated, TouchableWithoutFeedback } from 'react-native';
-import { Color } from '../../constants/colors';
-import { Fonts } from '../../constants/fonts';
+import { Color } from '../../../constants/colors';
+import { Fonts } from '../../../constants/fonts';
 
 interface Props {
     text?: string;

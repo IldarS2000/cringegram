@@ -1,21 +1,21 @@
-import React, {FC, useEffect, useState} from 'react'
+import React, {FC, useState} from 'react'
 import {StyleSheet} from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {NavigationScreenProp} from "react-navigation";
 import {View} from 'react-native';
 import {useStores} from '../hooks/useStores';
-import {ImageChanger} from "../components/UI/ImageChanger";
+import {ImageChanger} from "../components/UI/ImageChanger/ImageChanger";
 import {ImageInfo} from "expo-image-picker/build/ImagePicker.types";
 import {base64ImagePrefix} from "../constants/base64";
-import {Input} from "../components/UI/Input";
-import {Button} from "../components/UI/Button";
+import {Input} from "../components/UI/Input/Input";
+import {Button} from "../components/UI/Button/Button";
 
 interface Props {
     navigation: NavigationScreenProp<any>
 }
 
 export const EditProfile: FC<Props> = observer(({navigation}) => {
-    const {profileStore: {getUser, getUserPosts, user, updateUserAvatar, isLoading, updateUserAboutMe}} = useStores();
+    const {profileStore: {user, updateUserAvatar, isLoading, updateUserAboutMe}} = useStores();
     const [aboutMe, setAboutMe] = useState<string | null>(user?.aboutMe || null);
 
     const handleImageChange = (image: ImageInfo) => {

@@ -2,8 +2,8 @@ import React, {FC, useEffect, useRef, useState} from 'react'
 import {Animated, StyleSheet, Text} from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {useStores} from "../hooks/useStores";
-import {Input} from "../components/UI/Input";
-import {Button} from "../components/UI/Button";
+import {Input} from "../components/UI/Input/Input";
+import {Button} from "../components/UI/Button/Button";
 import {Fonts} from "../constants/fonts";
 
 export const EnterUsername: FC = observer((): JSX.Element => {

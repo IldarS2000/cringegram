@@ -1,12 +1,12 @@
 import {axiosInstance} from "./interceptors";
 import {AxiosPromise} from "axios";
-import {UserExistsResponse} from "../interfaces/dto/user-exists-response";
-import {AuthResponse} from "../interfaces/dto/auth-response";
-import {UserInfoResponse} from "../interfaces/dto/user-info-response";
+import {UserExistsResponse} from "../interfaces/user-exists-response";
+import {AuthResponse} from "../interfaces/auth-response";
+import {UserInfoResponse} from "../interfaces/user-info-response";
 import {FileRequest} from "../interfaces/file-request";
 import {Post} from "../interfaces/post";
 import {mockUsers} from "../utils/mock-users";
-import {UserSearchResult} from "../interfaces/dto/user-search-result";
+import {UserSearchResult} from "../interfaces/user-search-result";
 
 export const checkUserExists = (email: string): AxiosPromise<UserExistsResponse> =>
     axiosInstance.post('/userexists', {email});

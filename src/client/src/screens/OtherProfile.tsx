@@ -11,13 +11,13 @@ import EyeIcon from '../images/eye.svg';
 import SubAddIcon from '../images/sub-add.svg';
 import SubRemoveIcon from '../images/sub-remove.svg';
 import SearchIcon from '../images/search.svg';
-import {PostPhoto} from "../components/PostPhoto";
-import {PhotoModal} from "../components/PhotoModal";
+import {PostPhoto} from "../components/UI/PostPhoto/PostPhoto";
+import {PhotoModal} from "../components/modals/PhotoModal/PhotoModal";
 import {Post} from "../interfaces/post";
-import {UserInfoResponse} from "../interfaces/dto/user-info-response";
+import {UserInfoResponse} from "../interfaces/user-info-response";
 import {getAllUserPosts, getUserInfo, toggleLike, toggleSubscribe} from "../services/api.service";
 import {postDateComparator} from "../utils/post-date-comparator";
-import {ProfileContentInfo} from "../components/ProfileContentInfo";
+import {ProfileContentInfo} from "../components/UI/ProfileContentInfo/ProfileContentInfo";
 
 interface Props {
     navigation: NavigationScreenProp<any>;
@@ -62,12 +62,12 @@ export const OtherProfile: FC<Props> = observer(({navigation, route: {params}}) 
 
     const handleSubPress = async () => {
         if (user) {
-            const response = toggleSubscribe(user.id);
+            toggleSubscribe(user.id);
         }
     };
 
     const handleLikePress = async (postId: number) => {
-        const response = await toggleLike(postId);
+        await toggleLike(postId);
         const newPosts = posts!.map((post) => {
             if (post.id === postId) {
                 return {

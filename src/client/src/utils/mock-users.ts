@@ -1,4 +1,4 @@
-import {UserSearchResult} from "../interfaces/dto/user-search-result";
+import {UserSearchResult} from "../interfaces/user-search-result";
 
 export const mockUsers: UserSearchResult[] = [
     {

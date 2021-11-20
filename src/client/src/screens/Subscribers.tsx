@@ -7,8 +7,8 @@ import {formatSubsType} from "../utils/format-subs-type";
 import SubscribersIcon from './../../assets/svg/subscribers.svg';
 import SubscriptionsIcon from './../../assets/svg/subscriptions.svg';
 import {Fonts} from "../constants/fonts";
-import {UserSearchResult} from "../interfaces/dto/user-search-result";
-import {SubscriberItem} from "../components/SubscriberItem";
+import {UserSearchResult} from "../interfaces/user-search-result";
+import {SubscriberItem} from "../components/UI/SubscriberItem/SubscriberItem";
 import {Color} from "../constants/colors";
 import {getSubscribers, getSubscriptions} from "../services/api.service";
 

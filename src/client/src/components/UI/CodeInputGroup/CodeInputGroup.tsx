@@ -1,8 +1,8 @@
 import React, {forwardRef, useEffect, useRef, useState} from 'react'
 import {Animated, StyleSheet, Text, ViewStyle,} from 'react-native';
-import {Color} from '../../constants/colors';
+import {Color} from '../../../constants/colors';
 import {CodeField, Cursor, useClearByFocusCell} from "react-native-confirmation-code-field";
-import {Fonts} from "../../constants/fonts";
+import {Fonts} from "../../../constants/fonts";
 
 interface Props {
     style?: ViewStyle;

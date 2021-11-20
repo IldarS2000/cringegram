@@ -7,17 +7,15 @@ import {
 } from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {View, Text} from 'react-native';
-import {Color} from "../constants/colors";
-import {Fonts} from "../constants/fonts";
-import {Post} from "../interfaces/post";
-import {format, parseISO} from "date-fns";
-import DislikeIcon from '../images/dislike.svg';
-import CommentIcon from '../images/comment.svg';
-import DotsIcon from '../images/dots.svg';
+import {Color} from "../../../constants/colors";
+import {Fonts} from "../../../constants/fonts";
+import {Post} from "../../../interfaces/post";
+import DislikeIcon from '../../../images/dislike.svg';
+import CommentIcon from '../../../images/comment.svg';
 import {BlurView} from "expo-blur";
-import {getUserAvatar, getUserInfo} from "../services/api.service";
-import {base64ImagePrefix} from "../constants/base64";
-import {UserInfoResponse} from "../interfaces/dto/user-info-response";
+import {getUserInfo} from "../../../services/api.service";
+import {base64ImagePrefix} from "../../../constants/base64";
+import {UserInfoResponse} from "../../../interfaces/user-info-response";
 
 interface Props {
     visible: boolean;
@@ -81,7 +79,7 @@ export const FeedPostModal: FC<Props> = observer(({ visible, onRequestClose, pos
                                 style={styles.avatar}
                                 source={currentUser?.avatar
                                     ? {uri: `${base64ImagePrefix}${currentUser.avatar}`}
-                                    : require('../../assets/icon.png')
+                                    : require('../../../../assets/icon.png')
                                 }
                             />
                                 <Text style={styles.username}>{currentUser?.username}</Text>

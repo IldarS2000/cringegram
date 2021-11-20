@@ -1,24 +1,19 @@
-import React, {FC, useEffect} from 'react'
-import { StyleSheet, useWindowDimensions} from 'react-native';
+import React, {FC} from 'react'
+import { StyleSheet} from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {NavigationScreenProp} from "react-navigation";
 import {View} from 'react-native';
 import {useStores} from '../hooks/useStores';
 import SettingsIcon from './../../assets/svg/settings.svg';
 import {Color} from "../constants/colors";
-import {BigButton} from "../components/UI/BigButton";
+import {BigButton} from "../components/UI/BigButton/BigButton";
 
 interface Props {
     navigation: NavigationScreenProp<any>
 }
 
 export const Settings: FC<Props> = observer(({navigation}) => {
-    const {authStore: { logout }, profileStore: {getUser, getUserPosts}} = useStores();
-
-    useEffect(() => {
-        getUser();
-        getUserPosts()
-    }, []);
+    const {authStore: { logout }} = useStores();
 
     const handleEditPress = () => {
         navigation.navigate('EDIT_PROFILE');

@@ -9,16 +9,15 @@ import {toJS} from 'mobx';
 import SettingsIcon from './../../assets/svg/settings.svg';
 import {Color} from "../constants/colors";
 import {base64ImagePrefix} from "../constants/base64";
-import {SmallButton} from "../components/UI/SmallButton";
+import {SmallButton} from "../components/UI/SmallButton/SmallButton";
 import AddIcon from './../../assets/svg/add.svg';
 import EyeIcon from '../images/eye.svg';
-import {AddPostModal} from "../components/AddPostModal";
-import {PostPhoto} from "../components/PostPhoto";
-import {PhotoModal} from "../components/PhotoModal";
+import {AddPostModal} from "../components/modals/AddPostModal/AddPostModal";
+import {PostPhoto} from "../components/UI/PostPhoto/PostPhoto";
+import {PhotoModal} from "../components/modals/PhotoModal/PhotoModal";
 import {Post} from "../interfaces/post";
 import SearchIcon from '../images/search.svg';
-import {ProfileContentInfo} from "../components/ProfileContentInfo";
-
+import {ProfileContentInfo} from "../components/UI/ProfileContentInfo/ProfileContentInfo";
 
 interface Props {
     navigation: NavigationScreenProp<any>;

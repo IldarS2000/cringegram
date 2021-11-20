@@ -1,8 +1,8 @@
 import React, { FC, useEffect, useRef, useState } from 'react'
 import { View, StyleSheet, Text, ViewStyle, TextInput, KeyboardType, Animated } from 'react-native';
-import { Color } from '../../constants/colors';
-import { Fonts } from '../../constants/fonts';
-import { getStyleByCondition } from '../../utils/get-style-by-condition';
+import { Color } from '../../../constants/colors';
+import { Fonts } from '../../../constants/fonts';
+import { getStyleByCondition } from '../../../utils/get-style-by-condition';
 
 interface Props {
     label?: string;
