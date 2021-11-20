@@ -7,64 +7,19 @@ import {Input} from "../components/UI/Input";
 import {debounce} from "lodash";
 import {UserSearchResult} from "../interfaces/dto/user-search-result";
 import {UserSearchItem} from "../components/UserSearchItem";
+import {searchUsers} from "../services/api.service";
 
 interface Props {
     navigation: NavigationScreenProp<any>
 }
 
-const mockUsers: UserSearchResult[] = [
-    {
-        id: 1,
-        username: 'kek',
-        aboutMe: 'my description'
-    },
-    {
-        id: 2,
-        username: 'keks',
-        aboutMe: 'my description'
-    },
-    {
-        id: 3,
-        username: 'wmek',
-        aboutMe: 'my description'
-    },
-    {
-        id: 4,
-        username: 'kek',
-        aboutMe: 'my description'
-    },
-    {
-        id: 5,
-        username: 'keks',
-        aboutMe: 'my description'
-    },
-    {
-        id: 6,
-        username: 'wmek',
-        aboutMe: 'my description'
-    },
-    {
-        id: 7,
-        username: 'kek',
-        aboutMe: 'my description'
-    },
-    {
-        id: 8,
-        username: 'keks',
-        aboutMe: 'my description'
-    },
-    {
-        id: 9,
-        username: 'wmek',
-        aboutMe: 'my description'
-    },
-];
-
 export const Search: FC<Props> = observer(({navigation}) => {
     const [searchTerm, setSearchTerm] = useState<string>('');
+    const [users, setUsers] = useState<UserSearchResult[]>([]);
 
-    const getDebouncedSearchResult = useCallback(debounce((term: string) => {
-        console.log(term);
+    const getDebouncedSearchResult = useCallback(debounce(async (term: string) => {
+        const users = await searchUsers(term);
+        setUsers(users);
     }, 500), []);
 
     useEffect(() => {
@@ -86,7 +41,7 @@ export const Search: FC<Props> = observer(({navigation}) => {
             />
             <FlatList<UserSearchResult>
                 style={styles.users}
-                data={mockUsers}
+                data={users}
                 keyExtractor={({ id }) => `${id}`}
                 renderItem={({ item }) => {
                     return <UserSearchItem user={item} onPress={handleUserPress}/>

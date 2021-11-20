@@ -17,15 +17,26 @@ import DotsIcon from '../images/dots.svg';
 import {Button} from "./UI/Button";
 import {useStores} from "../hooks/useStores";
 import EditIcon from "../images/edit.svg";
+import {getStyleByCondition} from "../utils/get-style-by-condition";
+import {NavigationScreenProp} from "react-navigation";
 
 interface Props {
     visible: boolean;
     onRequestClose: () => void;
     post?: Post;
     isOtherUser?: boolean;
+    navigation: NavigationScreenProp<any>;
+    onLikePress: (postId: number) => void;
 }
 
-export const PhotoModal: FC<Props> = observer(({ visible, onRequestClose, post, isOtherUser = false}: Props): JSX.Element => {
+export const PhotoModal: FC<Props> = observer(({
+    visible,
+    onRequestClose,
+    post,
+    isOtherUser = false,
+    navigation,
+    onLikePress
+}: Props): JSX.Element => {
     const { height } = useWindowDimensions();
     const { profileStore: { deletePost, updatePost } } = useStores();
 
@@ -48,11 +59,11 @@ export const PhotoModal: FC<Props> = observer(({ visible, onRequestClose, post, 
     };
 
     const handleDislikeCountPress = () => {
-
+        navigation.navigate('LIKES', { postId: post!.id });
     };
 
     const handleDislikePress = () => {
-
+        post && onLikePress(post.id);
     };
 
     const handleDotsPress = () => {
@@ -93,8 +104,6 @@ export const PhotoModal: FC<Props> = observer(({ visible, onRequestClose, post, 
                                 <TextInput
                                     multiline
                                     style={styles.text}
-                                    // onFocus={toggleTextFocused}
-                                    // onBlur={toggleTextFocused}
                                     maxLength={128}
                                     onChangeText={setDescription}
                                     value={description}
@@ -145,7 +154,10 @@ export const PhotoModal: FC<Props> = observer(({ visible, onRequestClose, post, 
                                 ...styles.descriptionWrapper,
                                 height: height - 360
                             }}>
-                                <View style={styles.buttons}>
+                                <View style={{
+                                    ...styles.buttons,
+                                    ...getStyleByCondition(isOtherUser, { maxWidth: 200 })
+                                }}>
                                     <View style={styles.button}>
                                         <TouchableWithoutFeedback onPress={handleDislikePress}>
                                             <DislikeIcon fill={Color.BLUE200} width={24} height={24} />
@@ -215,6 +227,7 @@ const styles = StyleSheet.create({
     buttonText: {
         ...Fonts.digits,
         marginLeft: 8,
+        minWidth: 20,
     },
     date: {
         ...Fonts.description,

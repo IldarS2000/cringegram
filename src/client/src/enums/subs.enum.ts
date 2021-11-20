@@ -1,0 +1,4 @@
+export enum SubsType {
+    SUBSCRIPTIONS = 'SUBSCRIPTIONS',
+    SUBSCRIBERS = 'SUBSCRIBERS',
+}
