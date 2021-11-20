@@ -43,6 +43,14 @@ export const addPost = (photo: FileRequest, description: string): AxiosPromise<P
     return axiosInstance.post('/post', formData);
 };
 
+export const deletePost = (postId: number): AxiosPromise => {
+    return axiosInstance.delete(`/post?postId=${postId}`);
+};
+
+export const updatePost = (postId: number, description: string): AxiosPromise => {
+    return axiosInstance.put('/post', { id: postId, description });
+};
+
 export const getAllUserPosts = (userId: number): AxiosPromise<Array<Post>> =>
     axiosInstance.get(`/posts/${userId}`);
 

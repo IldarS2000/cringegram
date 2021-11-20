@@ -19,6 +19,8 @@ import {EditProfile} from "./src/screens/EditProfile";
 import {Developers} from "./src/screens/Developers";
 import {About} from "./src/screens/About";
 import {Feed} from "./src/screens/Feed";
+import {OtherProfile} from "./src/screens/OtherProfile";
+import {Search} from "./src/screens/Search";
 
 const Stack = createNativeStackNavigator();
 
@@ -53,6 +55,8 @@ const App = observer(() => {
                             ) : (
                                 <>
                                     <Stack.Screen name='PROFILE' component={Profile}/>
+                                    <Stack.Screen name='OTHER_PROFILE' component={OtherProfile} />
+                                    <Stack.Screen name='SEARCH' component={Search}/>
                                     <Stack.Screen name='SETTINGS' component={Settings}/>
                                     <Stack.Screen name='EDIT_PROFILE' component={EditProfile}/>
                                     <Stack.Screen name='DEVELOPERS' component={Developers} />

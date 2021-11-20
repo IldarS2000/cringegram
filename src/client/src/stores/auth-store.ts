@@ -94,8 +94,8 @@ export class AuthStore {
         this.setIsSubmitting(true);
         try {
             this.setIsAuth(false);
-            await AsyncStorage.clear();
-            console.log(await AsyncStorage.getAllKeys())
+            await AsyncStorage.multiRemove(['@token', '@user']);
+            console.log(await AsyncStorage.getItem('@user'))
             this.setAuthStage(AuthStage.EMAIL);
         } catch (e) {
             console.log(e.message);
