@@ -8,6 +8,8 @@ interface Props {
     style?: ViewStyle;
     onPress?: () => void;
     disabled?: boolean;
+    primaryColor?: string;
+    secondaryColor?: string;
 }
 
 enum ColorAnimatedValue {
@@ -20,7 +22,9 @@ export const Button: FC<Props> = ({
     text,
     style,
     disabled = false,
-    onPress
+    onPress,
+    primaryColor = Color.GREEN300,
+    secondaryColor = Color.GREEN100,
 }: Props): JSX.Element => {
     const colorAnimation = useRef(new Animated.Value(ColorAnimatedValue.DEFAULT)).current;
 
@@ -53,7 +57,7 @@ export const Button: FC<Props> = ({
             ColorAnimatedValue.PRESSED,
             ColorAnimatedValue.DISABLED
         ],
-        outputRange: [Color.GREEN300, Color.GREEN100, Color.BLACK200]
+        outputRange: [primaryColor, secondaryColor, Color.BLACK200]
     });
 
     return (

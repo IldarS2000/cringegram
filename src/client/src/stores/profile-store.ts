@@ -1,19 +1,22 @@
 import {MainStore} from '.';
-import {autorun, makeAutoObservable, when} from 'mobx';
+import {autorun, makeAutoObservable, runInAction, when} from 'mobx';
 import {Post} from '../interfaces/post';
 import {isUserInfoResponse, UserInfoResponse} from '../interfaces/dto/user-info-response';
-import {parseISO} from 'date-fns';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
     addPost,
+    deletePost,
     getAllUserPosts,
     getUserInfo,
+    toggleLike,
+    updatePost,
     updateUserAboutMe,
     updateUserAvatar,
     updateUsername
 } from "../services/api.service";
 import {ImageInfo} from "expo-image-picker/build/ImagePicker.types";
 import {FileRequest} from "../interfaces/file-request";
+import {postDateComparator} from "../utils/post-date-comparator";
 
 export class ProfileStore {
     isLoading: boolean = false;
@@ -30,18 +33,15 @@ export class ProfileStore {
             }
         });
         when(() => !this.mainStore.authStore.isAuth, () => {
-            console.log('clear');
             this.setPosts(null);
             this.setUser(null);
+            console.log(this.posts);
         });
+
     }
 
     get sortedPosts () {
-        return this.posts?.slice().sort((post1, post2) => {
-            const date1 = parseISO(post1.createTimestamp).getTime();
-            const date2 = parseISO(post2.createTimestamp).getTime();
-            return date2 - date1;
-        });
+        return this.posts?.slice().sort(postDateComparator);
     };
 
     setIsLoading = (isLoading: boolean): void => {
@@ -72,7 +72,7 @@ export class ProfileStore {
         return this.posts ? this.posts.length : 0;
     }
 
-    getUser = async (userId?: number): Promise<void> => {
+    getUser = async (): Promise<void> => {
         this.setIsLoading(true);
         try {
             const userInfo = await AsyncStorage.getItem('@user');
@@ -158,6 +158,49 @@ export class ProfileStore {
             };
             const {data: post} = await addPost(file, description);
             this.posts?.unshift(post);
+        } catch (e) {
+            console.log(e.message);
+        } finally {
+            this.setIsLoading(false);
+        }
+    };
+
+    deletePost = async (postId: number): Promise<void> => {
+        this.setIsLoading(true);
+        try {
+            await deletePost(postId);
+            this.setPosts(this.posts?.filter((post: Post) => post.id !== postId) || null);
+        } catch (e) {
+            console.log(e.message);
+        } finally {
+            this.setIsLoading(false);
+        }
+    };
+
+    updatePost = async (postId: number, description: string): Promise<void> => {
+        this.setIsLoading(true);
+        try {
+            await updatePost(postId, description);
+            const post = this.posts?.find((post: Post) => postId === post.id)!;
+            runInAction(() => {
+                post.description = description;
+            });
+        } catch (e) {
+            console.log(e.message);
+        } finally {
+            this.setIsLoading(false);
+        }
+    };
+
+    toggleLike = async (postId: number): Promise<void> => {
+        this.setIsLoading(true);
+        try {
+            const response = await toggleLike(postId);
+            const post = this.posts?.find((post: Post) => postId === post.id)!;
+            runInAction(() => {
+                post.likeCount++;
+                post.hasYourLike = true;
+            });
         } catch (e) {
             console.log(e.message);
         } finally {

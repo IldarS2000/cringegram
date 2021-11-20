@@ -1,16 +1,15 @@
-import React, {FC, useDebugValue, useEffect, useState} from 'react'
+import React, {FC, useEffect, useState} from 'react'
 import {
     FlatList,
     Image,
     RefreshControl,
-    ScrollView,
     StyleSheet,
     TouchableWithoutFeedback,
     useWindowDimensions
 } from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {NavigationScreenProp} from "react-navigation";
-import {View, Text} from 'react-native';
+import {View} from 'react-native';
 import {useStores} from "../hooks/useStores";
 import {toJS} from "mobx";
 import {Color} from "../constants/colors";
@@ -23,7 +22,7 @@ interface Props {
 }
 
 export const Feed: FC<Props> = observer(({navigation}) => {
-    const { feedStore: { getAllPosts, sortedPosts: posts } } = useStores();
+    const { feedStore: { getAllPosts, sortedPosts: posts }, profileStore: { user } } = useStores();
     const [refreshing, setRefreshing] = useState(true);
     const {height, width} = useWindowDimensions();
     const [currentPostForModal, setCurrentPostForModal] = useState<Post | null>(null);
@@ -33,6 +32,8 @@ export const Feed: FC<Props> = observer(({navigation}) => {
             setRefreshing(false);
         });
     }, []);
+
+    useEffect(() => () => setCurrentPostForModal(null), []);
 
     const handleRefresh = async () => {
         setRefreshing(true);
@@ -49,7 +50,10 @@ export const Feed: FC<Props> = observer(({navigation}) => {
     };
 
     const handleProfileOpen = (userId: number) => {
-        navigation.navigate('PROFILE', { userId });
+        userId === user?.id
+            ? navigation.navigate('PROFILE')
+            : navigation.navigate('OTHER_PROFILE', { userId });
+
     };
 
     return (

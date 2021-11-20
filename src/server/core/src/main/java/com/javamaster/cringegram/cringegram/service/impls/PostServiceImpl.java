@@ -45,16 +45,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDto updatePost(UpdatePostDto updatePostDto, String token) {
-        try {
-            jwtService.isValidToken(token);
-            PostEntity post = postEntityRepository.getById(updatePostDto.getId());
-            post.setPhoto(updatePostDto.getPhoto().getBytes());
-            post.setDescription(updatePostDto.getDescription());
-            post = postEntityRepository.save(post);
-            return buildPostDto(post);
-        } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file");
-        }
+        jwtService.isValidToken(token);
+        PostEntity post = postEntityRepository.getById(updatePostDto.getId());
+        post.setDescription(updatePostDto.getDescription());
+        post = postEntityRepository.save(post);
+        return buildPostDto(post);
     }
 
     @Override
