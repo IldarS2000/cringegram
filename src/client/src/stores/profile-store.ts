@@ -8,6 +8,7 @@ import {
     deletePost,
     getAllUserPosts,
     getUserInfo,
+    toggleLike,
     updatePost,
     updateUserAboutMe,
     updateUserAvatar,
@@ -183,6 +184,22 @@ export class ProfileStore {
             const post = this.posts?.find((post: Post) => postId === post.id)!;
             runInAction(() => {
                 post.description = description;
+            });
+        } catch (e) {
+            console.log(e.message);
+        } finally {
+            this.setIsLoading(false);
+        }
+    };
+
+    toggleLike = async (postId: number): Promise<void> => {
+        this.setIsLoading(true);
+        try {
+            const response = await toggleLike(postId);
+            const post = this.posts?.find((post: Post) => postId === post.id)!;
+            runInAction(() => {
+                post.likeCount++;
+                post.hasYourLike = true;
             });
         } catch (e) {
             console.log(e.message);

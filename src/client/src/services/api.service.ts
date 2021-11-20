@@ -5,6 +5,8 @@ import {AuthResponse} from "../interfaces/dto/auth-response";
 import {UserInfoResponse} from "../interfaces/dto/user-info-response";
 import {FileRequest} from "../interfaces/file-request";
 import {Post} from "../interfaces/post";
+import {mockUsers} from "../utils/mock-users";
+import {UserSearchResult} from "../interfaces/dto/user-search-result";
 
 export const checkUserExists = (email: string): AxiosPromise<UserExistsResponse> =>
     axiosInstance.post('/userexists', {email});
@@ -56,3 +58,33 @@ export const getAllUserPosts = (userId: number): AxiosPromise<Array<Post>> =>
 
 export const getAllPosts = (): AxiosPromise<Array<Post>> =>
     axiosInstance.get('/posts/all');
+
+export const toggleLike = (postId: number): AxiosPromise => {
+    return new Promise((resolve) => {
+        console.log(`лайк/дизлайк postID:${postId}`);
+        resolve();
+    })
+    // axiosInstance.post('/posts/like', { postId });
+};
+
+export const toggleSubscribe = (userId: number): AxiosPromise => {
+    return new Promise((resolve) => {
+        console.log(`подписались на/отписались от userID:${userId}`);
+        resolve();
+    });
+    // return axiosInstance.post('/subscribe/', { userId });
+};
+
+export const getLikes = (postId: number): Promise<UserSearchResult[]> =>
+    new Promise((resolve) => resolve(mockUsers));
+
+export const getSubscribers = (userId: number): Promise<UserSearchResult[]> =>
+    new Promise((resolve) => resolve(mockUsers));
+
+export const getSubscriptions = (userId: number): Promise<UserSearchResult[]> =>
+    new Promise((resolve) => resolve(mockUsers));
+
+export const searchUsers = (searchTerm: string): Promise<UserSearchResult[]> =>
+    new Promise((resolve) => resolve(mockUsers.filter((user) => {
+        return searchTerm !== '' && user.username.includes(searchTerm)
+    })));

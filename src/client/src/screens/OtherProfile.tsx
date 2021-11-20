@@ -1,5 +1,5 @@
 import React, {FC, useEffect, useState} from 'react'
-import {Alert, FlatList, Image, StyleSheet, TouchableWithoutFeedback} from 'react-native';
+import {FlatList, Image, StyleSheet, TouchableWithoutFeedback} from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {NavigationRoute, NavigationScreenProp} from "react-navigation";
 import {View, Text} from 'react-native';
@@ -7,9 +7,6 @@ import {Fonts} from '../constants/fonts';
 import {toJS} from 'mobx';
 import {Color} from "../constants/colors";
 import {base64ImagePrefix} from "../constants/base64";
-import SubscribersIcon from './../../assets/svg/subscribers.svg';
-import SubscriptionsIcon from './../../assets/svg/subscriptions.svg';
-import PostsIcon from './../../assets/svg/posts.svg';
 import EyeIcon from '../images/eye.svg';
 import SubAddIcon from '../images/sub-add.svg';
 import SubRemoveIcon from '../images/sub-remove.svg';
@@ -18,9 +15,9 @@ import {PostPhoto} from "../components/PostPhoto";
 import {PhotoModal} from "../components/PhotoModal";
 import {Post} from "../interfaces/post";
 import {UserInfoResponse} from "../interfaces/dto/user-info-response";
-import {getAllUserPosts, getUserInfo} from "../services/api.service";
+import {getAllUserPosts, getUserInfo, toggleLike, toggleSubscribe} from "../services/api.service";
 import {postDateComparator} from "../utils/post-date-comparator";
-
+import {ProfileContentInfo} from "../components/ProfileContentInfo";
 
 interface Props {
     navigation: NavigationScreenProp<any>;
@@ -63,8 +60,27 @@ export const OtherProfile: FC<Props> = observer(({navigation, route: {params}}) 
         setShowPhotoModal(post);
     };
 
-    const handleSubPress = () => {
-        Alert.alert('плюс подписка');
+    const handleSubPress = async () => {
+        if (user) {
+            const response = toggleSubscribe(user.id);
+        }
+    };
+
+    const handleLikePress = async (postId: number) => {
+        const response = await toggleLike(postId);
+        const newPosts = posts!.map((post) => {
+            if (post.id === postId) {
+                return {
+                    ...post,
+                    hasYourLike: true,
+                    likeCount: post.likeCount + 1,
+                };
+            }
+            return post;
+        });
+        const post = posts?.find((post) => post.id === postId)!;
+        setShowPhotoModal(post);
+        setPosts(newPosts);
     };
 
     return (
@@ -106,20 +122,13 @@ export const OtherProfile: FC<Props> = observer(({navigation, route: {params}}) 
                         </View>
                         <Text style={styles.aboutMe}>{user.aboutMe}</Text>
                     </View>
-                    <View style={styles.contentInfo}>
-                        <View style={styles.infoItem}>
-                            <SubscriptionsIcon width={24} height={24} fill={Color.BLUE300}/>
-                            <Text style={styles.infoText}>{user.subscriptionCount || 0}</Text>
-                        </View>
-                        <View style={styles.infoItem}>
-                            <SubscribersIcon width={24} height={20} fill={Color.BLUE300}/>
-                            <Text style={styles.infoText}>{user.subscribersCount || 0}</Text>
-                        </View>
-                        <View style={styles.infoItem}>
-                            <PostsIcon width={24} height={20} fill={Color.BLUE300}/>
-                            <Text style={styles.infoText}>{posts?.length || 0}</Text>
-                        </View>
-                    </View>
+                    <ProfileContentInfo
+                        postsCount={posts?.length || 0}
+                        subscribersCount={user.subscribersCount || 0}
+                        subscriptionCount={user.subscriptionCount || 0}
+                        userId={user.id}
+                        navigation={navigation}
+                    />
                     <FlatList
                         style={styles.posts}
                         contentContainerStyle={styles.postsContainer}
@@ -134,7 +143,16 @@ export const OtherProfile: FC<Props> = observer(({navigation, route: {params}}) 
                     />
                 </>
             )}
-            <PhotoModal visible={!!showPhotoModal} onRequestClose={hidePhotoModal} post={showPhotoModal!} isOtherUser />
+            {showPhotoModal && (
+                <PhotoModal
+                    visible={!!showPhotoModal}
+                    onRequestClose={hidePhotoModal}
+                    post={showPhotoModal!}
+                    isOtherUser
+                    onLikePress={handleLikePress}
+                    navigation={navigation}
+                />
+            )}
         </View>
     );
 });
@@ -188,26 +206,6 @@ const styles = StyleSheet.create({
         ...Fonts.description,
         maxWidth: 200,
         minHeight: 21,
-    },
-    contentInfo: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '80%',
-        marginBottom: 10,
-    },
-    infoItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    infoText: {
-        ...Fonts.digits,
-        marginLeft: 8,
-    },
-    subCount: {
-        ...Fonts.paragraph
-    },
-    postCount: {
-        ...Fonts.paragraph
     },
     posts: {
         marginBottom: 40,

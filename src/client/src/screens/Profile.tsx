@@ -9,9 +9,6 @@ import {toJS} from 'mobx';
 import SettingsIcon from './../../assets/svg/settings.svg';
 import {Color} from "../constants/colors";
 import {base64ImagePrefix} from "../constants/base64";
-import SubscribersIcon from './../../assets/svg/subscribers.svg';
-import SubscriptionsIcon from './../../assets/svg/subscriptions.svg';
-import PostsIcon from './../../assets/svg/posts.svg';
 import {SmallButton} from "../components/UI/SmallButton";
 import AddIcon from './../../assets/svg/add.svg';
 import EyeIcon from '../images/eye.svg';
@@ -20,6 +17,7 @@ import {PostPhoto} from "../components/PostPhoto";
 import {PhotoModal} from "../components/PhotoModal";
 import {Post} from "../interfaces/post";
 import SearchIcon from '../images/search.svg';
+import {ProfileContentInfo} from "../components/ProfileContentInfo";
 
 
 interface Props {
@@ -27,7 +25,7 @@ interface Props {
 }
 
 export const Profile: FC<Props> = observer(({navigation}) => {
-    const {profileStore: {getUser, user, sortedPosts: posts, getUserPosts, postCount}} = useStores();
+    const {profileStore: {getUser, user, sortedPosts: posts, getUserPosts, toggleLike}} = useStores();
     const [showAddPostModal, setShowAddPostModal] = useState(false);
     const [showPhotoModal, setShowPhotoModal] = useState<Post | null>(null);
 
@@ -65,6 +63,10 @@ export const Profile: FC<Props> = observer(({navigation}) => {
         setShowPhotoModal(post);
     };
 
+    const handleLikePress = (postId: number) => {
+        toggleLike(postId);
+    };
+
     return (
         <View style={styles.screen}>
             <TouchableWithoutFeedback
@@ -96,20 +98,13 @@ export const Profile: FC<Props> = observer(({navigation}) => {
                         </View>
                         <Text style={styles.aboutMe}>{user.aboutMe}</Text>
                     </View>
-                    <View style={styles.contentInfo}>
-                        <View style={styles.infoItem}>
-                            <SubscriptionsIcon width={24} height={24} fill={Color.BLUE300}/>
-                            <Text style={styles.infoText}>{user.subscriptionCount || 0}</Text>
-                        </View>
-                        <View style={styles.infoItem}>
-                            <SubscribersIcon width={24} height={20} fill={Color.BLUE300}/>
-                            <Text style={styles.infoText}>{user.subscribersCount || 0}</Text>
-                        </View>
-                        <View style={styles.infoItem}>
-                            <PostsIcon width={24} height={20} fill={Color.BLUE300}/>
-                            <Text style={styles.infoText}>{postCount || 0}</Text>
-                        </View>
-                    </View>
+                    <ProfileContentInfo
+                        postsCount={posts?.length || 0}
+                        subscribersCount={user.subscribersCount || 0}
+                        subscriptionCount={user.subscriptionCount || 0}
+                        userId={user.id}
+                        navigation={navigation}
+                    />
                     <FlatList
                         style={styles.posts}
                         contentContainerStyle={styles.postsContainer}
@@ -130,7 +125,15 @@ export const Profile: FC<Props> = observer(({navigation}) => {
                 onPress={handleAddPress}
             />
             <AddPostModal visible={showAddPostModal} onRequestClose={hideAddPostModal} />
-            <PhotoModal visible={!!showPhotoModal} onRequestClose={hidePhotoModal} post={showPhotoModal!} />
+            {showPhotoModal && (
+                <PhotoModal
+                    visible={!!showPhotoModal}
+                    onRequestClose={hidePhotoModal}
+                    post={showPhotoModal!}
+                    onLikePress={handleLikePress}
+                    navigation={navigation}
+                />
+            )}
         </View>
     );
 });
@@ -184,26 +187,6 @@ const styles = StyleSheet.create({
         ...Fonts.description,
         maxWidth: 200,
         minHeight: 21,
-    },
-    contentInfo: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '80%',
-        marginBottom: 10,
-    },
-    infoItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    infoText: {
-        ...Fonts.digits,
-        marginLeft: 8,
-    },
-    subCount: {
-        ...Fonts.paragraph
-    },
-    postCount: {
-        ...Fonts.paragraph
     },
     posts: {
         marginBottom: 40,
