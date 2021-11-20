@@ -18,7 +18,7 @@ export const Search: FC<Props> = observer(({navigation}) => {
     const [users, setUsers] = useState<UserShortInfo[]>([]);
 
     const getDebouncedSearchResult = useCallback(debounce(async (term: string) => {
-        const users = await searchUsers(term);
+        const { data: users } = await searchUsers(term);
         setUsers(users);
     }, 500), []);
 

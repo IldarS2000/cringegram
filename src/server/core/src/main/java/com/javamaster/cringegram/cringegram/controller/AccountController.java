@@ -12,19 +12,19 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 public class AccountController {
-
     private final AccountService accountService;
 
     @ApiOperation(
             value = "Get user info"
     )
     @GetMapping("${url.getUserInfo}")
-    public UserInfoDto getUserInfo(@RequestParam("userId") Long userId) {
-        return accountService.getUserInfo(userId);
+    public UserInfoDto getUserInfo(@RequestParam("userId") Long userId, @RequestHeader("Authorization") String token) {
+        return accountService.getUserInfo(userId, token);
     }
 
     @ApiOperation(
@@ -50,7 +50,6 @@ public class AccountController {
     public ResponseEntity<UserInfoDto> updateUserAvatar(@RequestPart @Valid MultipartFile image, @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(accountService.updateUserAvatar(image, token));
     }
-
 
     @ApiOperation(
             value = "Get user avatar"
@@ -87,5 +86,36 @@ public class AccountController {
         return ResponseEntity.ok(accountService.changeSubscription(userId, token));
     }
 
+    @ApiOperation(
+            value = "search users"
+    )
+    @GetMapping("user/search")
+    public List<UserShortInfoDto> searchUsers(
+            @RequestParam("searchTerm") String searchTerm,
+            @RequestHeader("Authorization") String token
+    ) {
+        return accountService.searchUsers(searchTerm, token);
+    }
 
+    @ApiOperation(
+            value = "search users"
+    )
+    @GetMapping("/user/subscribers")
+    public List<UserShortInfoDto> getUserSubscribers(
+            @RequestParam("userId") Long userId,
+            @RequestHeader("Authorization") String token
+    ) {
+        return accountService.getUserSubscribers(userId, token);
+    }
+
+    @ApiOperation(
+            value = "search users"
+    )
+    @GetMapping("/user/subscriptions")
+    public List<UserShortInfoDto> getUserSubscriptions(
+            @RequestParam("userId") Long userId,
+            @RequestHeader("Authorization") String token
+    ) {
+        return accountService.getUserSubscriptions(userId, token);
+    }
 }

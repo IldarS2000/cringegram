@@ -16,9 +16,6 @@ public interface PostEntityRepository extends JpaRepository<PostEntity, Long> {
 
     List<PostEntity> getAllByUserId(Long userId);
 
-    @Query(value = "delete from post where id =:postId", nativeQuery = true)
-    Void myDeletePostById(@Param("postId") Long postId);
-
     @Query(value = "select count(*) from comment where post_id =:postId", nativeQuery = true)
     Integer getCommentsCount(@Param("postId") Long postId);
 }

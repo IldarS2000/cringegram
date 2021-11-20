@@ -18,6 +18,7 @@ import {createComment, getAllUserPosts, getUserInfo, toggleLike, toggleSubscribe
 import {postDateComparator} from "../utils/post-date-comparator";
 import {ProfileContentInfo} from "../components/UI/ProfileContentInfo/ProfileContentInfo";
 import {PhotoModal} from "../components/modals/PhotoModal/PhotoModal";
+import {useStores} from "../hooks/useStores";
 
 interface Props {
     navigation: NavigationScreenProp<any>;
@@ -26,8 +27,15 @@ interface Props {
 
 export const OtherProfile: FC<Props> = observer(({navigation, route: {params}}) => {
     const [showPhotoModal, setShowPhotoModal] = useState<Post | null>(null);
+    const { profileStore: { user: myUser } } = useStores();
     const [user, setUser] = useState<UserInfoResponse | null>(null);
     const [posts, setPosts] = useState<Post[] | null>(null);
+
+    useEffect(() => {
+        if (params?.userId && params?.userId === myUser?.id) {
+            navigation.navigate('PROFILE');
+        }
+    }, [params?.userId]);
 
     useEffect(() => {
         const getUser = async (userId: number) => {
@@ -36,15 +44,15 @@ export const OtherProfile: FC<Props> = observer(({navigation, route: {params}}) 
                     { data: userInfo },
                     { data: posts },
                 ] = await Promise.all([getUserInfo(userId), getAllUserPosts(userId)]);
+                console.log({ ...userInfo, avatar: null });
                 setUser(userInfo);
                 setPosts(posts.sort(postDateComparator));
             } catch (e) {
                 console.log(e.message);
             }
         };
-        params?.userId && getUser(params.userId);
+        params?.userId && params.userId !== myUser?.id && getUser(params.userId);
     }, [params?.userId]);
-
 
     const handleFeedButtonPress = () => {
         navigation.navigate('FEED') ;
@@ -62,7 +70,10 @@ export const OtherProfile: FC<Props> = observer(({navigation, route: {params}}) 
 
     const handleSubPress = async () => {
         if (user) {
-            toggleSubscribe(user.id);
+            toggleSubscribe(user.id).then((response) => {
+                response.data.hasSubscription ? myUser!.subscriptionCount++ : myUser!.subscriptionCount--;
+                setUser(response.data);
+            });
         }
     };
 
@@ -114,7 +125,7 @@ export const OtherProfile: FC<Props> = observer(({navigation, route: {params}}) 
             >
                 <SearchIcon width={24} height={24} fill={Color.BLACK500} style={styles.search}/>
             </TouchableWithoutFeedback>
-            {!(1 > 3) ? (
+            {!user?.hasSubscription ? (
                     <TouchableWithoutFeedback
                         onPress={handleSubPress}
                     >

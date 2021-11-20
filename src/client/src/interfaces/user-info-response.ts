@@ -7,6 +7,7 @@ export interface UserInfoResponse {
     subscribersCount: number;
     avatar?: string;
     username?: string;
+    hasSubscription: boolean;
 }
 
 export const isUserInfoResponse = (userInfo: unknown | UserInfoResponse): userInfo is UserInfoResponse => {
