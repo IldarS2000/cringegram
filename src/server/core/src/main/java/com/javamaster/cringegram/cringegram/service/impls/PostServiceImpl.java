@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -70,7 +71,10 @@ public class PostServiceImpl implements PostService {
 
     public List<PostDto> getAllPosts(String token) {
         UserEntity user = jwtService.claimTokenPayload(token);
-        return postEntityRepository.getAll().stream()
+        List<UserEntity> subscriptions = user.getSubscriptions();
+        List<PostEntity> posts = new ArrayList<>();
+        subscriptions.forEach(subscription -> posts.addAll(subscription.getPosts()));
+        return posts.stream()
                 .map(postEntity -> {
                     PostDto postDto = buildPostDto(postEntity);
                     postDto.setHasYourLike(postEntity.getUsersLiked().contains(user));
