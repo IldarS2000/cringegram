@@ -1,10 +1,12 @@
 import {MainStore} from '.';
-import {makeAutoObservable} from 'mobx';
+import {makeAutoObservable, runInAction} from 'mobx';
 import {Post} from '../interfaces/post';
-import {parseISO} from 'date-fns';
 import {
-    getAllPosts,
+    createComment,
+    getAllPosts, toggleLike,
 } from "../services/api.service";
+import {postDateComparator} from "../utils/post-date-comparator";
+import {Comment} from "../interfaces/comment";
 
 export class FeedStore {
     isLoading: boolean = false;
@@ -16,11 +18,7 @@ export class FeedStore {
     }
 
     get sortedPosts () {
-        return this.posts?.slice().sort((post1, post2) => {
-            const date1 = parseISO(post1.createTimestamp).getTime();
-            const date2 = parseISO(post2.createTimestamp).getTime();
-            return date2 - date1;
-        });
+        return this.posts?.slice().sort(postDateComparator);
     };
 
     setErrorMessage = (errorMessage: string | null): void => {
@@ -40,6 +38,43 @@ export class FeedStore {
         try {
             const { data: posts } = await getAllPosts();
             this.setPosts(posts);
+        } catch (e) {
+            console.log(e.message);
+        } finally {
+            this.setIsLoading(false);
+        }
+    };
+
+    toggleLike = async (postId: number): Promise<void> => {
+        this.setIsLoading(true);
+        try {
+            const { data: postData } = await toggleLike(postId);
+            const post = this.posts?.find((post: Post) => postId === post.id)!;
+            runInAction(() => {
+                post.hasYourLike = postData.hasYourLike;
+                post.likeCount = postData.likeCount;
+            });
+        } catch (e) {
+            console.log(e.message);
+        } finally {
+            this.setIsLoading(false);
+        }
+    };
+
+    createComment = async (postId: number, comment: string): Promise<Comment | void> => {
+        this.setIsLoading(true);
+        try {
+            const { data: commentData } = await createComment({
+                postId,
+                comment,
+                userId: this.mainStore.profileStore.user!.id
+            });
+            this.posts?.forEach((post: Post) => {
+                if (post.id === postId) {
+                    post.commentsCount++;
+                }
+            });
+            return commentData;
         } catch (e) {
             console.log(e.message);
         } finally {

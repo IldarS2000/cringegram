@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -24,8 +25,8 @@ public class PostEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(targetEntity = UserEntity.class)
-    @JoinColumn(name = "user_id")
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
     @Column(name = "photo")
@@ -40,13 +41,13 @@ public class PostEntity implements Serializable {
     @Column(name = "like_count")
     private Integer likeCount;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
-    private Set<CommentEntity> comments = new HashSet<CommentEntity>(0);
+    @OneToMany(mappedBy = "post", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<CommentEntity> comments;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "like",
+    @JoinTable(name = "likes",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private Set<UserEntity> usersLiked = new HashSet<UserEntity>(0);
+    private List<UserEntity> usersLiked;
 }

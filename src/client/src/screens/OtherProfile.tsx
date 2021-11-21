@@ -13,12 +13,12 @@ import SubRemoveIcon from '../images/sub-remove.svg';
 import SearchIcon from '../images/search.svg';
 import {PostPhoto} from "../components/UI/PostPhoto/PostPhoto";
 import {Post} from "../interfaces/post";
-import {UserInfoResponse} from "../interfaces/user-info-response";
 import {createComment, getAllUserPosts, getUserInfo, toggleLike, toggleSubscribe} from "../services/api.service";
 import {postDateComparator} from "../utils/post-date-comparator";
 import {ProfileContentInfo} from "../components/UI/ProfileContentInfo/ProfileContentInfo";
 import {PhotoModal} from "../components/modals/PhotoModal/PhotoModal";
 import {useStores} from "../hooks/useStores";
+import {UserInfoResponse} from "../interfaces/user-info-response";
 
 interface Props {
     navigation: NavigationScreenProp<any>;
@@ -44,7 +44,6 @@ export const OtherProfile: FC<Props> = observer(({navigation, route: {params}}) 
                     { data: userInfo },
                     { data: posts },
                 ] = await Promise.all([getUserInfo(userId), getAllUserPosts(userId)]);
-                console.log({ ...userInfo, avatar: null });
                 setUser(userInfo);
                 setPosts(posts.sort(postDateComparator));
             } catch (e) {
@@ -78,19 +77,14 @@ export const OtherProfile: FC<Props> = observer(({navigation, route: {params}}) 
     };
 
     const handleLikePress = async (postId: number) => {
-        await toggleLike(postId);
+        const { data: postData } = await toggleLike(postId);
         const newPosts = posts!.map((post) => {
             if (post.id === postId) {
-                return {
-                    ...post,
-                    hasYourLike: true,
-                    likeCount: post.likeCount + 1,
-                };
+                return postData;
             }
             return post;
         });
-        const post = posts?.find((post) => post.id === postId)!;
-        setShowPhotoModal(post);
+        setShowPhotoModal(postData);
         setPosts(newPosts);
     };
 

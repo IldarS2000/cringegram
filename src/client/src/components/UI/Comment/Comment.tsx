@@ -6,7 +6,6 @@ import {UserAvatar} from "../UserAvatar/UserAvatar";
 import {UserShortInfo} from "../../../interfaces/user-short-info";
 import {Fonts} from "../../../constants/fonts";
 import {Color} from "../../../constants/colors";
-import {base64ImagePrefix} from "../../../constants/base64";
 
 interface Props {
     comment: IComment;
@@ -34,7 +33,7 @@ export const Comment: FC<Props> = ({ comment, onUserPress }: Props): JSX.Element
             <View style={styles.wrapper}>
                 <TouchableWithoutFeedback onPress={handleUserPress}>
                     <View style={styles.avatarWrapper}>
-                        <UserAvatar avatar={`${base64ImagePrefix}${user?.avatar}`} />
+                        <UserAvatar avatar={user?.avatar} />
                     </View>
                 </TouchableWithoutFeedback>
                 <Text style={styles.text}>{comment.comment}</Text>
@@ -45,7 +44,10 @@ export const Comment: FC<Props> = ({ comment, onUserPress }: Props): JSX.Element
 
 const styles = StyleSheet.create({
     comment: {
-        width: 305,
+        maxWidth: 305,
+        minWidth: 280,
+        width: '100%',
+        alignItems: 'center',
         minHeight: 108,
         elevation: 10,
         paddingBottom: 10,

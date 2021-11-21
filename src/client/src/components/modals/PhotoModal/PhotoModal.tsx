@@ -106,6 +106,7 @@ export const PhotoModal: FC<Props> = observer(({
                         postDateISO={post?.createTimestamp}
                         likeCount={post?.likeCount || 0}
                         commentsCount={post?.commentsCount || 0}
+                        hasLike={post?.hasYourLike || false}
                     />
                 )}
                 {currentPane === PhotoModalPane.EXTRA_MENU && (

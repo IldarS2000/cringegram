@@ -27,4 +27,5 @@ public interface AccountService {
     List<UserShortInfoDto> getUserSubscribers(Long userId, String token);
 
     List<UserShortInfoDto> getUserSubscriptions(Long userId, String token);
+
 }

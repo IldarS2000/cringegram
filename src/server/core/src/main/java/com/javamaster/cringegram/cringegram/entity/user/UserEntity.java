@@ -12,6 +12,7 @@ import org.apache.catalina.User;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -20,7 +21,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(of = { "id" })
+//@EqualsAndHashCode(of = { "id" })
 public class UserEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,10 +52,10 @@ public class UserEntity implements Serializable {
     private String email;
 
     @OneToMany(mappedBy = "user")
-    private Set<PostEntity> posts;
+    private List<PostEntity> posts;
 
-    @OneToMany(mappedBy = "user")
-    private Set<CommentEntity> comments;
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    private List<CommentEntity> comments;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "subscription",
@@ -62,7 +63,7 @@ public class UserEntity implements Serializable {
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     @JsonIgnore
-    private Set<UserEntity> subscriptions = new HashSet<UserEntity>(0);
+    private List<UserEntity> subscriptions;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "subscription",
@@ -70,13 +71,13 @@ public class UserEntity implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "subscriber_id")
     )
     @JsonIgnore
-    private Set<UserEntity> subscribers = new HashSet<UserEntity>(0);
+    private List<UserEntity> subscribers;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "like",
+    @JoinTable(name = "likes",
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "post_id")
     )
-    private Set<PostEntity> likedPosts;
+    private List<PostEntity> likedPosts;
 
 }

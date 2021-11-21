@@ -3,6 +3,7 @@ package com.javamaster.cringegram.cringegram.service.impls;
 import com.javamaster.cringegram.cringegram.dto.CreatePostDto;
 import com.javamaster.cringegram.cringegram.dto.PostDto;
 import com.javamaster.cringegram.cringegram.dto.UpdatePostDto;
+import com.javamaster.cringegram.cringegram.dto.UserShortInfoDto;
 import com.javamaster.cringegram.cringegram.entity.PostEntity;
 import com.javamaster.cringegram.cringegram.entity.user.UserEntity;
 import com.javamaster.cringegram.cringegram.repository.PostEntityRepository;
@@ -11,6 +12,7 @@ import com.javamaster.cringegram.cringegram.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
@@ -45,47 +47,92 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDto updatePost(UpdatePostDto updatePostDto, String token) {
-        jwtService.isValidToken(token);
+        UserEntity user = jwtService.claimTokenPayload(token);
         PostEntity post = postEntityRepository.getById(updatePostDto.getId());
         post.setDescription(updatePostDto.getDescription());
         post = postEntityRepository.save(post);
-        return buildPostDto(post);
+        PostDto postDto = buildPostDto(post);
+        postDto.setHasYourLike(post.getUsersLiked().contains(user));
+        return postDto;
     }
 
     @Override
     public List<PostDto> getAllUserPosts(Long userId, String token) {
-        jwtService.isValidToken(token);
-        List<PostEntity> posts = postEntityRepository.getAllByUserId(userId);
-
-        return buildPostDtos(posts);
+        UserEntity user = jwtService.claimTokenPayload(token);
+        return postEntityRepository.getAllByUserId(userId).stream()
+                .map(postEntity -> {
+                    PostDto postDto = buildPostDto(postEntity);
+                    postDto.setHasYourLike(postEntity.getUsersLiked().contains(user));
+                    return postDto;
+                })
+                .collect(Collectors.toList());
     }
 
     public List<PostDto> getAllPosts(String token) {
-        jwtService.isValidToken(token);
-        List<PostEntity> posts = postEntityRepository.getAll();
+        UserEntity user = jwtService.claimTokenPayload(token);
+        return postEntityRepository.getAll().stream()
+                .map(postEntity -> {
+                    PostDto postDto = buildPostDto(postEntity);
+                    postDto.setHasYourLike(postEntity.getUsersLiked().contains(user));
+                    return postDto;
+                })
+                .collect(Collectors.toList());
 
-        return buildPostDtos(posts);
     }
 
     @Override
     public PostDto getPostById(Long postId, String token) {
-        jwtService.isValidToken(token);
+        UserEntity user = jwtService.claimTokenPayload(token);
         PostEntity post = postEntityRepository.getById(postId);
 
-        return buildPostDto(post);
+        PostDto postDto = buildPostDto(post);
+        postDto.setHasYourLike(post.getUsersLiked().contains(user));
+
+        return postDto;
     }
 
     @Override
+    @Transactional
     public Void deletePost(Long postId, String token) {
-        boolean isValidToken = jwtService.isValidToken(token);
-        if (!isValidToken) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file");
-        }
+        UserEntity user = jwtService.claimTokenPayload(token);
         PostEntity post = postEntityRepository.getById(postId);
-        postEntityRepository.delete(post);
+        post.getUsersLiked().clear();
+        user.getPosts().remove(post);
+        postEntityRepository.removePostEntityById(postId);
         return null;
     }
 
+    @Override
+    public PostDto toggleLike(Long postId, String token) {
+        UserEntity user = jwtService.claimTokenPayload(token);
+        PostEntity post = postEntityRepository.getById(postId);
+
+        PostDto postDto;
+        if (post.getUsersLiked().contains(user)) {
+            post.getUsersLiked().remove(user);
+            post.setLikeCount(post.getLikeCount() - 1);
+            postDto = buildPostDto(postEntityRepository.save(post));
+            postDto.setHasYourLike(false);
+        } else {
+            post.getUsersLiked().add(user);
+            post.setLikeCount(post.getLikeCount() + 1);
+            postDto = buildPostDto(postEntityRepository.save(post));
+            postDto.setHasYourLike(true);
+        }
+        return postDto;
+    }
+
+    @Override
+    public List<UserShortInfoDto> getPostLikes(Long postId, String token) {
+        PostEntity post = postEntityRepository.getById(postId);
+        List<UserEntity> usersLiked = post.getUsersLiked();
+        return usersLiked.stream().map(user -> UserShortInfoDto.builder()
+                .aboutMe(user.getAboutMe())
+                .id(user.getId())
+                .username(user.getUsername())
+                .avatar(user.getAvatar())
+                .build()).collect(Collectors.toList());
+    }
 
     private PostDto buildPostDto(PostEntity post) {
         Integer commentsCount = postEntityRepository.getCommentsCount(post.getId());

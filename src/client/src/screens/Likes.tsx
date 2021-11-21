@@ -5,23 +5,21 @@ import {NavigationRoute, NavigationScreenProp} from "react-navigation";
 import DislikeIcon from '../images/dislike.svg';
 import {Fonts} from "../constants/fonts";
 import {UserShortInfo} from "../interfaces/user-short-info";
-import {SubscriberItem} from "../components/UI/SubscriberItem/SubscriberItem";
 import {Color} from "../constants/colors";
 import {getLikes} from "../services/api.service";
+import {SubscriberItem} from "../components/UI/SubscriberItem/SubscriberItem";
 
 interface Props {
     navigation: NavigationScreenProp<any>;
     route: NavigationRoute<{postId: number}>;
 }
 
-
-
 export const Likes: FC<Props> = observer(({navigation, route}) => {
     const [users, setUsers] = useState<UserShortInfo[]>([]);
 
     useEffect(() => {
-        route.params?.postId && getLikes(route.params.postId).then((users) => {
-            setUsers(users);
+        route.params?.postId && getLikes(route.params.postId).then((response) => {
+            setUsers(response.data);
         });
     }, [route.params?.postId]);
 

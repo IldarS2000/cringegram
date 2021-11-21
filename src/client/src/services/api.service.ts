@@ -2,14 +2,13 @@ import {axiosInstance} from "./interceptors";
 import {AxiosPromise} from "axios";
 import {UserExistsResponse} from "../interfaces/user-exists-response";
 import {AuthResponse} from "../interfaces/auth-response";
-import {UserInfoResponse} from "../interfaces/user-info-response";
 import {FileRequest} from "../interfaces/file-request";
 import {Post} from "../interfaces/post";
-import {mockUsers} from "../utils/mock-users";
 import { Comment} from "../interfaces/comment";
 import {UserShortInfo} from "../interfaces/user-short-info";
 import {UserAvatarResponse} from "../interfaces/user-avatar-response";
 import {CreateCommentDto} from "../interfaces/create-comment-dto";
+import {UserInfoResponse} from "../interfaces/user-info-response";
 
 export const checkUserExists = (email: string): AxiosPromise<UserExistsResponse> =>
     axiosInstance.post('/userexists', {email});
@@ -65,20 +64,15 @@ export const getAllUserPosts = (userId: number): AxiosPromise<Array<Post>> =>
 export const getAllPosts = (): AxiosPromise<Array<Post>> =>
     axiosInstance.get('/posts/all');
 
-export const toggleLike = (postId: number): AxiosPromise => {
-    return new Promise((resolve) => {
-        console.log(`лайк/дизлайк postID:${postId}`);
-        resolve();
-    })
-    // axiosInstance.post('/posts/like', { postId });
-};
+export const toggleLike = (postId: number): AxiosPromise<Post> =>
+    axiosInstance.post(`/post/like?postId=${postId}`);
 
 export const toggleSubscribe = (userId: number): AxiosPromise<UserInfoResponse> => {
     return axiosInstance.post(`change-subscriber/${userId}`, { userId });
 };
 
-export const getLikes = (postId: number): Promise<UserShortInfo[]> =>
-    new Promise((resolve) => resolve(mockUsers));
+export const getLikes = (postId: number): AxiosPromise<UserShortInfo[]> =>
+    axiosInstance.get(`/post/like?postId=${postId}`);
 
 export const getSubscribers = (userId: number): AxiosPromise<UserShortInfo[]> =>
     axiosInstance.get(`/user/subscribers?userId=${userId}`);
