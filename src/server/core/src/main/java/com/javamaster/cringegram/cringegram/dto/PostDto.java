@@ -20,4 +20,5 @@ public class PostDto {
     private String description;
     private Integer likeCount;
     private Integer commentsCount;
+    private Boolean hasYourLike;
 }

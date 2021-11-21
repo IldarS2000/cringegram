@@ -95,7 +95,6 @@ export class AuthStore {
         try {
             this.setIsAuth(false);
             await AsyncStorage.multiRemove(['@token', '@user']);
-            console.log(await AsyncStorage.getItem('@user'))
             this.setAuthStage(AuthStage.EMAIL);
         } catch (e) {
             console.log(e.message);

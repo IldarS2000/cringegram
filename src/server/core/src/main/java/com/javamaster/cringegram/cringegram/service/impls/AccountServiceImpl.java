@@ -90,7 +90,7 @@ public class AccountServiceImpl implements AccountService {
         UserEntity subscriber = jwtService.claimTokenPayload(token);
         UserEntity user = userEntityRepository.getById(userId);
 
-        Set<UserEntity> subscribers = user.getSubscribers();
+        List<UserEntity> subscribers = user.getSubscribers();
 
         if (subscribers.contains(subscriber)) {
             subscribers.remove(subscriber);
@@ -143,15 +143,15 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public List<UserShortInfoDto> getUserSubscribers(Long userId, String token) {
         jwtService.isValidToken(token);
-        Set<UserEntity> users = userEntityRepository.getSubscribers(userId);
-        return users.stream().map(this::buildingUserShortInfo).collect(Collectors.toList());
+        UserEntity user = userEntityRepository.getById(userId);
+        return user.getSubscribers().stream().map(this::buildingUserShortInfo).collect(Collectors.toList());
     }
 
     @Override
     public List<UserShortInfoDto> getUserSubscriptions(Long userId, String token) {
         jwtService.isValidToken(token);
-        Set<UserEntity> users = userEntityRepository.getSubscriptions(userId);
-        return users.stream().map(this::buildingUserShortInfo).collect(Collectors.toList());
+        UserEntity user = userEntityRepository.getById(userId);
+        return user.getSubscriptions().stream().map(this::buildingUserShortInfo).collect(Collectors.toList());
     }
 
     private UserShortInfoDto buildingUserShortInfo(UserEntity user) {

@@ -21,7 +21,7 @@ public class CommentEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(targetEntity = PostEntity.class)
+    @ManyToOne
     @JoinColumn(name = "post_id")
     private PostEntity post;
 

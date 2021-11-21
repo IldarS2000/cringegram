@@ -12,7 +12,7 @@ import {Fonts} from "../../../../constants/fonts";
 import {commentIdComparator} from "../../../../utils/comment-id-comparator";
 
 interface Props {
-    postId: number;
+    postId?: number;
     navigation: NavigationScreenProp<any>;
     onCommentAdd: (postId: number, comment: string) => Promise<IComment>;
 }
@@ -24,7 +24,7 @@ export const CommentsPane: FC<Props> = ({ postId, navigation, onCommentAdd }: Pr
     const [commentText, setCommentText] = useState<string>('');
 
     useEffect(() => {
-        getCommentsByPostId(postId).then((comments) => {
+        postId && getCommentsByPostId(postId).then((comments) => {
             setComments(comments.data.sort(commentIdComparator));
         });
     }, [postId]);
@@ -39,7 +39,7 @@ export const CommentsPane: FC<Props> = ({ postId, navigation, onCommentAdd }: Pr
 
     const handleAddConfirm = () => {
         if (commentText) {
-            onCommentAdd(postId, commentText).then((comment) => {
+            postId && onCommentAdd(postId, commentText).then((comment) => {
                 const newComments = comments.slice();
                 setComments([comment, ...newComments]);
                 setCreatingMode(false);

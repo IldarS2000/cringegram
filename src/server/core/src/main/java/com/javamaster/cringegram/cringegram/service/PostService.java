@@ -1,8 +1,6 @@
 package com.javamaster.cringegram.cringegram.service;
 
-import com.javamaster.cringegram.cringegram.dto.CreatePostDto;
-import com.javamaster.cringegram.cringegram.dto.PostDto;
-import com.javamaster.cringegram.cringegram.dto.UpdatePostDto;
+import com.javamaster.cringegram.cringegram.dto.*;
 
 import java.util.List;
 
@@ -13,4 +11,6 @@ public interface PostService {
     List<PostDto> getAllPosts(String token);
     PostDto getPostById(Long userId, String token);
     Void deletePost(Long postId, String token);
+    PostDto toggleLike(Long postId, String token);
+    List<UserShortInfoDto> getPostLikes(Long postId, String token);
 }

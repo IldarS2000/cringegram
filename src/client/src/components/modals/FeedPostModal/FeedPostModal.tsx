@@ -11,22 +11,30 @@ import {Color} from "../../../constants/colors";
 import {Fonts} from "../../../constants/fonts";
 import {Post} from "../../../interfaces/post";
 import DislikeIcon from '../../../images/dislike.svg';
+import DislikeFilledIcon from '../../../images/dislike-filled.svg';
 import CommentIcon from '../../../images/comment.svg';
 import {BlurView} from "expo-blur";
 import {getUserInfo} from "../../../services/api.service";
 import {base64ImagePrefix} from "../../../constants/base64";
 import {UserInfoResponse} from "../../../interfaces/user-info-response";
+import {useStores} from "../../../hooks/useStores";
+import {CommentsPane} from "../PhotoModal/components/CommentsPane";
+import {NavigationScreenProp} from "react-navigation";
+import {Comment} from "../../../interfaces/comment";
 
 interface Props {
     visible: boolean;
     onRequestClose: () => void;
     post?: Post;
     onProfileOpen: (userId: number) => void;
+    navigation: NavigationScreenProp<any>;
 }
 
-export const FeedPostModal: FC<Props> = observer(({ visible, onRequestClose, post, onProfileOpen}: Props): JSX.Element => {
+export const FeedPostModal: FC<Props> = observer(({ visible, onRequestClose, post, onProfileOpen, navigation}: Props): JSX.Element => {
     const { height, width } = useWindowDimensions();
     const [currentUser, setCurrentUser] = useState<UserInfoResponse | null>(null);
+    const { feedStore: { toggleLike, createComment } } = useStores();
+    const [commentsMode, setCommentsMode] = useState<boolean>(false);
 
     useEffect(() => {
         visible && post && getUserInfo(post!.userId).then((response) => {
@@ -37,22 +45,39 @@ export const FeedPostModal: FC<Props> = observer(({ visible, onRequestClose, pos
         }
     }, [visible, post]);
 
+    useEffect(() => {
+        !post && setCommentsMode(false);
+    }, []);
+
     const handleCommentsPress = () => {
-        
+        setCommentsMode(true);
     };
 
     const handleDislikePress = () => {
-
+        post && toggleLike(post.id);
     };
 
     const handleProfileInfoPress = () => {
         currentUser && onProfileOpen(currentUser.id);
     };
 
+    const handleCommentAdd = (postId: number, comment: string): Promise<Comment | void> => {
+        return createComment(postId, comment);
+    };
+
+    const handleLikesCountPress = () => {
+        navigation.navigate('LIKES', { postId: post?.id });
+    };
+
+    const handleRequestClose = () => {
+        setCommentsMode(false);
+        onRequestClose();
+    };
+
     return (
         <Modal
             animationType='fade'
-            onRequestClose={onRequestClose}
+            onRequestClose={handleRequestClose}
             visible={visible}
             transparent
             style={{
@@ -86,18 +111,34 @@ export const FeedPostModal: FC<Props> = observer(({ visible, onRequestClose, pos
                         </View>
                     </TouchableWithoutFeedback>
                     <Text style={styles.description}>{post?.description}</Text>
-                    <View style={styles.buttons}>
-                        <TouchableWithoutFeedback onPress={handleCommentsPress}>
-                            <View style={styles.button}>
-                                <CommentIcon fill={Color.BLUE200} width={45} height={45} />
+                    {commentsMode
+                        ? <CommentsPane
+                            postId={post?.id}
+                            navigation={navigation}
+                            // @ts-ignore
+                            onCommentAdd={handleCommentAdd}
+                        />
+                        : (
+                            <View style={styles.buttons}>
+                                <TouchableWithoutFeedback onPress={handleCommentsPress}>
+                                    <View style={styles.button}>
+                                        <CommentIcon fill={Color.BLUE200} width={45} height={45} style={styles.buttonIcon} />
+                                        <Text style={styles.digits}>{post?.commentsCount}</Text>
+                                    </View>
+                                </TouchableWithoutFeedback>
+                                        <View style={styles.button}>
+                                            <TouchableWithoutFeedback onPress={handleDislikePress}>
+                                                {post?.hasYourLike
+                                                    ? <DislikeFilledIcon fill={Color.BLUE200} width={45} height={45} style={styles.buttonIcon} />
+                                                    : <DislikeIcon fill={Color.BLUE200} width={45} height={45} style={styles.buttonIcon} />
+                                                }
+                                            </TouchableWithoutFeedback>
+                                            <TouchableWithoutFeedback onPress={handleLikesCountPress}>
+                                                <Text style={styles.digits}>{post?.likeCount}</Text>
+                                            </TouchableWithoutFeedback>
+                                        </View>
                             </View>
-                        </TouchableWithoutFeedback>
-                        <View style={styles.button}>
-                            <TouchableWithoutFeedback onPress={handleDislikePress}>
-                                <DislikeIcon fill={Color.BLUE200} width={45} height={45} />
-                            </TouchableWithoutFeedback>
-                        </View>
-                    </View>
+                        )}
                 </View>
             </View>
         </Modal>
@@ -146,7 +187,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     button: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    buttonIcon: {
+        marginRight: 10,
     },
     avatar: {
         height: 60,
@@ -159,5 +204,10 @@ const styles = StyleSheet.create({
         color: Color.ORANGE300,
         flexGrow: 1,
         textAlign: 'center',
+    },
+    digits: {
+        ...Fonts.digits,
+        fontSize: 20,
+        minWidth: 20,
     }
 });

@@ -63,6 +63,7 @@ export const Feed: FC<Props> = observer(({navigation}) => {
                 onRequestClose={handleCloseModalRequest}
                 post={currentPostForModal!}
                 onProfileOpen={handleProfileOpen}
+                navigation={navigation}
             />
             <FlatList
                 style={styles.posts}

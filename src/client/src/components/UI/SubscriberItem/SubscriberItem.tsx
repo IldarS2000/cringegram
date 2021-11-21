@@ -5,7 +5,6 @@ import {UserShortInfo} from "../../../interfaces/user-short-info";
 import {Color} from "../../../constants/colors";
 import {Fonts} from "../../../constants/fonts";
 import {UserAvatar} from "../UserAvatar/UserAvatar";
-import {base64ImagePrefix} from "../../../constants/base64";
 
 interface Props {
     user: UserShortInfo;
@@ -21,7 +20,7 @@ export const SubscriberItem: FC<Props> = ({user, onPress, color}) => {
                 backgroundColor: color,
             }}>
                 <View style={styles.avatarWrapper}>
-                    <UserAvatar avatar={`${base64ImagePrefix}${user.avatar}`} />
+                    <UserAvatar avatar={user.avatar} />
                 </View>
                 <Text style={styles.username}>{user.username}</Text>
             </View>

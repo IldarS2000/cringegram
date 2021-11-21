@@ -1,7 +1,6 @@
 import {MainStore} from '.';
 import {autorun, makeAutoObservable, runInAction, when} from 'mobx';
 import {Post} from '../interfaces/post';
-import {isUserInfoResponse, UserInfoResponse} from '../interfaces/user-info-response';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
     addPost, createComment,
@@ -18,6 +17,7 @@ import {ImageInfo} from "expo-image-picker/build/ImagePicker.types";
 import {FileRequest} from "../interfaces/file-request";
 import {postDateComparator} from "../utils/post-date-comparator";
 import {Comment} from "../interfaces/comment";
+import {isUserInfoResponse, UserInfoResponse} from "../interfaces/user-info-response";
 
 export class ProfileStore {
     isLoading: boolean = false;
@@ -83,8 +83,6 @@ export class ProfileStore {
                 this.setUser(userInfo);
                 await AsyncStorage.setItem('@user', JSON.stringify(userInfo));
                 return;
-            } else {
-                throw new Error('Ошибка в получении данных о пользователе');
             }
         } catch (e) {
             console.log(e.message);
@@ -158,7 +156,9 @@ export class ProfileStore {
                 name: 'avatar.jpeg'
             };
             const {data: post} = await addPost(file, description);
-            this.posts?.unshift(post);
+            runInAction(() => {
+                this.posts?.unshift(post);
+            });
         } catch (e) {
             console.log(e.message);
         } finally {
@@ -196,11 +196,11 @@ export class ProfileStore {
     toggleLike = async (postId: number): Promise<void> => {
         this.setIsLoading(true);
         try {
-            await toggleLike(postId);
+            const { data: postData } = await toggleLike(postId);
             const post = this.posts?.find((post: Post) => postId === post.id)!;
             runInAction(() => {
-                post.likeCount++;
-                post.hasYourLike = true;
+                post.hasYourLike = postData.hasYourLike;
+                post.likeCount = postData.likeCount;
             });
         } catch (e) {
             console.log(e.message);

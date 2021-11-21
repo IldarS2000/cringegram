@@ -4,6 +4,7 @@ import {Color} from "../../../../constants/colors";
 import {Fonts} from "../../../../constants/fonts";
 import {getStyleByCondition} from "../../../../utils/get-style-by-condition";
 import DislikeIcon from "../../../../images/dislike.svg";
+import DislikeFilledIcon from "../../../../images/dislike-filled.svg";
 import CommentIcon from "../../../../images/comment.svg";
 import DotsIcon from "../../../../images/dots.svg";
 import {format, parseISO} from "date-fns";
@@ -18,6 +19,7 @@ interface Props {
     isOtherUser: boolean;
     likeCount: number;
     commentsCount: number;
+    hasLike: boolean;
 }
 
 export const PostInfoPane: FC<Props> = ({
@@ -30,6 +32,7 @@ export const PostInfoPane: FC<Props> = ({
     postDateISO,
     likeCount,
     commentsCount,
+    hasLike,
 }: Props): JSX.Element => {
     const {height} = useWindowDimensions();
     return (
@@ -43,7 +46,10 @@ export const PostInfoPane: FC<Props> = ({
             }}>
                 <View style={styles.button}>
                     <TouchableWithoutFeedback onPress={onDislikePress}>
-                        <DislikeIcon fill={Color.BLUE200} width={24} height={24} />
+                        {!hasLike
+                            ? <DislikeIcon fill={Color.BLUE200} width={24} height={24} />
+                            : <DislikeFilledIcon fill={Color.BLUE200} width={24} height={24} />
+                        }
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={onDislikeCountPress}>
                         <Text style={styles.buttonText}>{likeCount}</Text>

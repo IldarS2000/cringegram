@@ -40,6 +40,7 @@ public class JwtServiceImpl implements JwtService {
             Claims claims = parseToken(tokenValue, secret);
             UserEntity user =  userEntityRepository.findByEmail(claims.get("email").toString());
             if (user != null) {
+                userEntityRepository.save(user);
                 return true;
             }
         }

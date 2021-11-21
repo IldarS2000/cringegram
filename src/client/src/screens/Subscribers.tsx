@@ -10,8 +10,8 @@ import {Fonts} from "../constants/fonts";
 import {UserShortInfo} from "../interfaces/user-short-info";
 import {Color} from "../constants/colors";
 import {getSubscribers, getSubscriptions} from "../services/api.service";
-import {SubscriberItem} from "../components/UI/SubscriberItem/SubscriberItem";
 import {useStores} from "../hooks/useStores";
+import {SubscriberItem} from "../components/UI/SubscriberItem/SubscriberItem";
 
 interface Props {
     navigation: NavigationScreenProp<any>;
